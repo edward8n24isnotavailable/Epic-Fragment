@@ -6,3 +6,5 @@ dist/
 *-check.png
 .codex-edge-debug/
 .codex-browser-check.mjs
+build/
+release/

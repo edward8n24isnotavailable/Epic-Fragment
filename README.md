@@ -16,6 +16,27 @@ F01＋F03＋F05 在祭坛解锁仅在监狱生效的临时灵力感知，返回�
 
 ## 操作
 
+### 玩家：单文件可执行程序
+
+`release/EpicFragment.exe` 把网页产物整体内嵌在可执行文件里，玩家机器**不需要安装 Node.js**，双击即玩。程序会在 `127.0.0.1:5173`（被占用时自动顺延）起一个本地服务器并打开默认浏览器；关闭命令窗口即结束。可选参数：`--no-open` 不自动开浏览器，`--port=8080` 指定端口。
+
+Windows SmartScreen 可能因为可执行文件未签名而拦截，选择“更多信息 → 仍要运行”即可。
+
+在开发机上生成这个文件：
+
+```bash
+npm ci
+npm run build:exe
+```
+
+打包流程见 [`tools/build-exe.mjs`](./tools/build-exe.mjs)：先跑 `tsc -b` 与 `vite build`，再用 Node SEA 把 `dist` 下全部资源作为 asset 注入 Node 运行时副本（postject），产物约 92 MB。内嵌服务器入口在 [`tools/sea-entry.cjs`](./tools/sea-entry.cjs)。`build/` 与 `release/` 不进版本库。
+
+### 开发：本地热更新
+
+Windows：安装 Node.js 后，双击项目根目录的 [`start-game.cmd`](./start-game.cmd)。首次运行会安装依赖；启动完成后自动打开默认浏览器。游戏期间保留命令窗口，关闭窗口即停止本地服务器。
+
+也可以在终端手动启动：
+
 ```bash
 npm ci
 npm run dev
