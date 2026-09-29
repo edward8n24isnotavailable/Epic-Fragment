@@ -14,6 +14,7 @@ export interface MovementInput {
   jumpPressed: boolean
   sprinting?: boolean
   extraJumps?: number
+  dodgeDirection?: -1 | 1
 }
 
 export interface WalkSurface {
@@ -86,7 +87,7 @@ export function stepMovement(
   const acceleration = grounded
     ? movementTuning.groundAcceleration
     : movementTuning.airAcceleration
-  const velocityX = input.direction === 0
+  const velocityX = input.dodgeDirection ? input.dodgeDirection * 10 : input.direction === 0
     ? approach(state.velocityX, 0, movementTuning.deceleration * dt)
     : approach(state.velocityX, input.direction * movementTuning.speed * (input.sprinting ? movementTuning.sprintMultiplier : 1), acceleration * dt)
 

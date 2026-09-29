@@ -9,10 +9,13 @@ import { PhysicsAggregate } from '@babylonjs/core/Physics/v2/physicsAggregate'
 import { PhysicsShapeType } from '@babylonjs/core/Physics/v2/IPhysicsEnginePlugin'
 import { Scene } from '@babylonjs/core/scene'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
+import { pixelSprite, propSprite, tileMaterial } from './pixelArt'
 import { armorySurfaces, citySurfaces, detentionSurfaces, prisonLocations, prisonRooms, prisonSurfaces } from '../world/prisonLayout'
 
 export interface PrisonScenery {
   player: Mesh
+  playerWeapon: Mesh
+  playerOffhand: Mesh
   enemy: Mesh
   enemyWeapon: Mesh
   cellGuard: Mesh
@@ -44,12 +47,9 @@ function box(scene: Scene, name: string, width: number, height: number, depth: n
   return mesh
 }
 
-function torch(scene: Scene, x: number, y: number, z: number, ember: StandardMaterial): void {
-  box(scene, `torch bracket ${x}`, 0.45, 0.13, 0.36, x, y - 0.25, z + 0.05, ember)
-  const flame = MeshBuilder.CreateSphere(`torch flame ${x}`, { diameter: 0.29 }, scene)
-  flame.position.set(x, y, z)
-  flame.material = ember
-  const light = new PointLight(`torch light ${x}`, flame.position.clone(), scene)
+function torch(scene: Scene, x: number, y: number, z: number): void {
+  propSprite(scene, `wall torch ${x}`, 'wall_torch', 1.5, 1.5, x, y, z - 0.1)
+  const light = new PointLight(`torch light ${x}`, new Vector3(x, y, z), scene)
   light.diffuse = new Color3(1, 0.46, 0.22)
   light.intensity = 10
   light.range = 8
@@ -61,15 +61,14 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
   scene.fogDensity = 0.012
   scene.fogColor = new Color3(0.027, 0.039, 0.064)
 
-  const stone = makeMaterial(scene, 'floor stone', new Color3(0.23, 0.27, 0.31))
-  const back = makeMaterial(scene, 'back wall', new Color3(0.075, 0.11, 0.16))
-  const trim = makeMaterial(scene, 'wall trim', new Color3(0.28, 0.33, 0.36))
-  const iron = makeMaterial(scene, 'prison iron', new Color3(0.13, 0.17, 0.2))
+  const stone = tileMaterial(scene, 'floor stone', 'stone_floor', 3)
+  const back = tileMaterial(scene, 'back wall', 'stone_wall', 5)
+  const trim = tileMaterial(scene, 'wall trim', 'cracked_stone', 2)
+  const iron = tileMaterial(scene, 'prison iron', 'rusted_iron', 2)
   const gold = makeMaterial(scene, 'altar brass', new Color3(0.56, 0.38, 0.2))
-  const ember = makeMaterial(scene, 'torch ember', new Color3(0.94, 0.39, 0.17), new Color3(0.8, 0.2, 0.04))
-  const red = makeMaterial(scene, 'inquisitor stone', new Color3(0.27, 0.17, 0.18))
+  const red = tileMaterial(scene, 'inquisitor stone', 'wet_stone', 3)
   const evidence = makeMaterial(scene, 'evidence glow', new Color3(0.43, 0.7, 0.79), new Color3(0.17, 0.43, 0.54))
-  const water = makeMaterial(scene, 'sewer water', new Color3(0.08, 0.24, 0.25), new Color3(0.02, 0.08, 0.09))
+  const water = tileMaterial(scene, 'sewer water', 'sewage', 4)
 
   // StandardMaterial considers only its first four lights by default.
   // Register the global light before the room torches so distant rooms stay visible.
@@ -108,15 +107,16 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
     box(scene, `cell bars ${x}`, 0.12, 3.4, 0.14, x, 2.0, 1.4, iron)
   }
   box(scene, 'cell lintel', 10.5, 0.22, 0.18, -79, 3.7, 1.4, iron)
-  const cellKnife = box(scene, 'cell D backup dagger', 0.65, 0.12, 0.2, -75, 0.72, 1.3, evidence)
-  const gear = box(scene, 'confiscated class equipment', 1.3, 1.9, 0.55, prisonLocations.equipmentX, 1.05, 1.35, gold)
+  const cellKnife = propSprite(scene, 'cell D backup dagger', 'cell_d_dagger', 0.95, 0.95, -75, 0.72, 1.3)
+  const gear = propSprite(scene, 'confiscated class equipment', 'confiscation_rack', 2.1, 2.1,
+    prisonLocations.equipmentX, 1.05, 1.35)
   box(scene, 'sewer entrance frame', 0.4, 4, 0.6, -73.2, 0.8, 0.4, trim)
 
   // Sewer: shallow water, bridge, collapse marker and the route up to the vent.
   box(scene, 'sewer water channel', 14, 0.07, 1.5, -65, -1.42, 1.65, water)
   box(scene, 'sewer stone bridge', 3.3, 0.17, 2.5, -65, -1.33, 0.05, trim)
   const flowerRing = box(scene, 'bridge flower ring', 0.34, 0.12, 0.34, -65, -1.08, -0.8, evidence)
-  for (const x of [-70, -60]) torch(scene, x, 1.3, 2.0, ember)
+  for (const x of [-70, -60]) torch(scene, x, 1.3, 2.0)
   box(scene, 'sewer collapsed masonry', 1.4, 0.25, 0.8, -61, -1.34, 1.2, trim)
 
   // Vent: four ascending narrow platforms, ribs and a false-wall silhouette.
@@ -134,10 +134,11 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
   // Middle corridor and the half-open archive room before the knight hall.
   for (const x of [-37, -29, -23]) {
     box(scene, `middle corridor recess ${x}`, 2.2, 3.1, 0.1, x, 4.9, 2.57, iron)
-    torch(scene, x + 1.5, 5.7, 2.0, ember)
+    torch(scene, x + 1.5, 5.7, 2.0)
   }
   box(scene, 'archive half-open door', 0.28, 3.9, 0.8, -20.4, 4.5, 1.6, trim)
-  box(scene, 'archive cabinet', 2.3, 2.3, 0.65, prisonLocations.archiveX, 3.75, 2.06, iron)
+  propSprite(scene, 'archive cabinet', 'archive_cabinet_f01', 2.6, 2.6,
+    prisonLocations.archiveX, 3.75, 1.7)
   for (const x of [-17.7, -17, -16.3]) box(scene, `archive shelf ${x}`, 0.5, 0.12, 0.45, x, 3.7, 1.64, trim)
   box(scene, 'archive reading stand', 1.6, 0.2, 1.1, prisonLocations.archiveX, 3.15, -0.5, trim)
   const fragmentF01 = box(scene, 'fragment F01 record', 0.67, 0.05, 0.45,
@@ -145,14 +146,14 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
   box(scene, 'archive back shelves', 5.2, 2.6, 0.32, -17, 4.0, 2.4, iron)
 
   // Elite corridor: arena silhouette and a high ledge for a later return.
-  for (const x of [-10, -4, 1]) torch(scene, x, 5.8, 2, ember)
+  for (const x of [-10, -4, 1]) torch(scene, x, 5.8, 2)
   box(scene, 'knight silhouette pedestal', 1.8, 0.2, 1.3, -5, 2.62, 1.5, iron)
   box(scene, 'double jump ledge', 3.1, 0.3, 1.8, -8, 6.05, 1.0, trim)
   const ledgeRing = box(scene, 'high ledge ring', 0.38, 0.14, 0.38, -8, 6.35, 0.5, evidence)
 
   // Hall: altar, entrance noticeboard, front door, armory stair and upper gate.
-  for (const x of [5, 20, 25]) torch(scene, x, 5.35, 2.0, ember)
-  box(scene, 'hall entrance noticeboard', 2.4, 2.1, 0.2, 5.5, 4.3, 2.28, iron)
+  for (const x of [5, 20, 25]) torch(scene, x, 5.35, 2.0)
+  propSprite(scene, 'hall entrance noticeboard', 'f07_notice_board', 2.6, 2.1, 5.5, 4.3, 2.16)
   const fragmentF07 = box(scene, 'fragment F07 hidden notice', 0.9, 0.55, 0.09, 5.5, 4.5, 2.12, evidence)
   fragmentF07.isVisible = false
   box(scene, 'hall front door', 3, 4.6, 0.15, 9, 5.2, 2.5, iron)
@@ -160,13 +161,13 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
   box(scene, 'armory stair entrance', 3.1, 2.3, 0.15, 21.5, 3.7, 2.5, iron)
   box(scene, 'upper locked gate', 2.8, 2.7, 0.18, 23.7, 8.1, 2.45, iron)
   box(scene, 'upper jump target', 1.9, 0.15, 1.0, 23.7, 6.2, 0.5, gold)
-  const shortcut = box(scene, 'one sided shortcut ladder', 0.45, 4.3, 0.5,
-    prisonLocations.shortcutX, 4.8, 1.75, iron)
+  const shortcut = propSprite(scene, 'one sided shortcut ladder', 'ladder', 1.9, 4.3,
+    prisonLocations.shortcutX, 4.8, 1.3)
   const ladderRungs: Mesh[] = []
   for (let y = 3.1; y < 6.8; y += 0.55) ladderRungs.push(box(scene, `shortcut rung ${y}`, 1.35, 0.12, 0.26,
     prisonLocations.shortcutX, y, 1.49, trim))
   box(scene, 'second floor warden door', 0.5, 4.1, 0.7, -41.8, 9, 1.8, red)
-  for (const x of [-33, -20, -7, 7]) torch(scene, x, 9.6, 2, ember)
+  for (const x of [-33, -20, -7, 7]) torch(scene, x, 9.6, 2)
   box(scene, 'inquisitor doorway left', 0.55, 5.4, 0.65, 27, 5.0, 1.95, trim)
   box(scene, 'inquisitor doorway head', 2.7, 0.4, 0.8, 28.35, 7.7, 1.95, trim)
 
@@ -175,9 +176,10 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
   box(scene, 'interrogation chair seat', 1.1, 0.18, 0.9, 38, 3.65, 0.25, trim)
   box(scene, 'interrogation chair back', 1.1, 2.1, 0.18, 38, 4.56, 0.62, trim)
   for (const x of [34, 35.2, 36.4, 39.6, 40.8]) box(scene, `inquisitor tool ${x}`, 0.12, 1.55, 0.16, x, 5.9, 2.34, iron)
-  torch(scene, 32, 5.35, 2, ember)
-  torch(scene, 42, 5.35, 2, ember)
-  const lockedDoor = box(scene, 'warden key door', 0.45, 4, 1.1, prisonLocations.lockX, 4.5, 0.3, iron)
+  torch(scene, 32, 5.35, 2)
+  torch(scene, 42, 5.35, 2)
+  const lockedDoor = propSprite(scene, 'warden key door', 'locked_door', 2.4, 4,
+    prisonLocations.lockX, 4.5, 0.3)
 
   // Small transition spaces keep F10 at the palace foyer without moving it
   // into the prison. The rest of the city and palace remain outside this slice.
@@ -194,23 +196,29 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
     prisonLocations.detentionX, 2.75, -0.5, evidence)
   box(scene, 'detention register shelves', 4.3, 2.4, 0.4, 115, 4.1, 2.4, iron)
 
-  const player = MeshBuilder.CreateCapsule('player placeholder', { height: 1.8, radius: 0.42 }, scene)
-  player.material = makeMaterial(scene, 'ashen traveller', new Color3(0.72, 0.78, 0.8))
-  player.position.set(prisonLocations.spawnX, 0.9, 0)
-  const enemy = MeshBuilder.CreateCapsule('ash soldier', { height: 1.8, radius: 0.43 }, scene)
-  enemy.position.set(prisonLocations.soldierX, 3.4, 0)
-  enemy.material = makeMaterial(scene, 'ash soldier armor', new Color3(0.5, 0.26, 0.23))
+  const player = pixelSprite(scene, 'unnamed prisoner', '/assets/characters/unnamed_prisoner_stand_64x96.png',
+    1.3, 1.95, prisonLocations.spawnX, 0.9, -0.03,
+    { left: 10 / 64, right: 50 / 64, top: 5 / 96, bottom: 90 / 96 })
+  const playerWeapon = MeshBuilder.CreateBox('equipped main weapon', { width: 0.14, height: 1.2, depth: 0.14 }, scene)
+  playerWeapon.material = makeMaterial(scene, 'player weapon metal', new Color3(0.68, 0.68, 0.67))
+  playerWeapon.isVisible = false
+  const playerOffhand = MeshBuilder.CreateBox('equipped offhand', { width: 0.45, height: 0.72, depth: 0.13 }, scene)
+  playerOffhand.material = makeMaterial(scene, 'player offhand gear', new Color3(0.48, 0.51, 0.56))
+  playerOffhand.isVisible = false
+  const enemy = pixelSprite(scene, 'ash soldier', '/assets/characters/ash_soldier_stand_64x96.png',
+    1.3, 1.95, prisonLocations.soldierX, 3.4, -0.03,
+    { left: 10 / 64, right: 50 / 64, top: 5 / 96, bottom: 90 / 96 })
   const enemyWeapon = box(scene, 'soldier blade', 0.13, 1.3, 0.13, prisonLocations.soldierX - 0.55, 3.35, -0.1, iron)
-  const cellGuard = MeshBuilder.CreateCapsule('first mad soldier', { height: 1.75, radius: 0.4 }, scene)
-  cellGuard.position.set(-78.7, 0.9, 0)
-  cellGuard.material = makeMaterial(scene, 'mad soldier', new Color3(0.42, 0.37, 0.32))
+  const cellGuard = pixelSprite(scene, 'first mad soldier', '/assets/characters/ash_soldier_stand_64x96.png',
+    1.3, 1.9, -78.7, 0.9, -0.03,
+    { left: 10 / 64, right: 50 / 64, top: 5 / 96, bottom: 90 / 96 })
   const corruptedKnight = MeshBuilder.CreateCapsule('corrupted knight', { height: 2.15, radius: 0.56 }, scene)
   corruptedKnight.position.set(-5, 3.58, 0)
   corruptedKnight.material = makeMaterial(scene, 'corrupted armor', new Color3(0.24, 0.33, 0.29))
   const upperGuards = [10, -2, -15, -27].map((x, index) => {
-    const guard = MeshBuilder.CreateCapsule(`upper guard ${index + 1}`, { height: 1.8, radius: 0.41 }, scene)
-    guard.position.set(x, 7.9, 0)
-    guard.material = makeMaterial(scene, `upper guard armor ${index}`, new Color3(0.38, 0.32, 0.27))
+    const guard = pixelSprite(scene, `upper guard ${index + 1}`, '/assets/characters/ash_soldier_stand_64x96.png',
+      1.3, 1.95, x, 7.9, -0.03,
+      { left: 10 / 64, right: 50 / 64, top: 5 / 96, bottom: 90 / 96 })
     return guard
   })
   const inquisitor = MeshBuilder.CreateCapsule('inquisitor elite', { height: 2.3, radius: 0.65 }, scene)
@@ -223,13 +231,11 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
   palaceGuard.position.set(prisonLocations.palaceGuardX, 3.5, 0)
   palaceGuard.material = makeMaterial(scene, 'palace guard armor', new Color3(0.37, 0.36, 0.28))
 
-  const altar = box(scene, 'checkpoint altar', 1.5, 0.7, 1, prisonLocations.altarX, 2.85, -0.6, gold)
-  const altarFlame = MeshBuilder.CreateSphere('checkpoint ember', { diameter: 0.42 }, scene)
-  altarFlame.position.set(prisonLocations.altarX, 3.4, -0.6)
-  altarFlame.material = ember
-  const fragmentF03 = box(scene, 'fragment F03 inscription', 0.62, 0.35, 0.06,
-    prisonLocations.altarX, 2.95, -1.13, evidence)
-  const altarLight = new PointLight('checkpoint light', altarFlame.position.clone(), scene)
+  const altar = propSprite(scene, 'checkpoint altar', 'altar', 2.2, 2.2,
+    prisonLocations.altarX, 3.14, -0.6)
+  const fragmentF03 = propSprite(scene, 'fragment F03 inscription', 'f03_stone_tablet', 0.7, 0.7,
+    prisonLocations.altarX, 2.95, -1.13)
+  const altarLight = new PointLight('checkpoint light', new Vector3(prisonLocations.altarX, 3.4, -0.6), scene)
   altarLight.diffuse = new Color3(1, 0.53, 0.25)
   altarLight.intensity = 13
   altarLight.range = 6
@@ -243,7 +249,7 @@ export function createPrisonScenery(scene: Scene): PrisonScenery {
   const camera = new FreeCamera('side camera', new Vector3(prisonLocations.spawnX, 3.1, -18), scene)
   camera.setTarget(new Vector3(prisonLocations.spawnX, 2.2, 0))
   camera.mode = FreeCamera.ORTHOGRAPHIC_CAMERA
-  return { player, enemy, enemyWeapon, cellGuard, corruptedKnight, upperGuards,
+  return { player, playerWeapon, playerOffhand, enemy, enemyWeapon, cellGuard, corruptedKnight, upperGuards,
     inquisitor, warden, palaceGuard, altar, slash, camera,
     fragmentMeshes: { F01: fragmentF01, F03: fragmentF03, F07: fragmentF07, F10: fragmentF10 },
     gateMeshes: { shortcut, cityGate, lockedDoor, gear, archiveReward, cellKnife, flowerRing,

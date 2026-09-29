@@ -1,3 +1,5 @@
+import type { CombatAttributes } from './weaponCatalog'
+
 export const originLoadouts = {
   knight: { name: '骑士', level: 9, armor: ['骑士头盔', '骑士铠甲', '骑士腿甲', '骑士护手'],
     mainHand: '直剑', offHand: '鸢形盾', other: '原素瓶×3' },
@@ -12,3 +14,30 @@ export const originLoadouts = {
 } as const
 
 export type OriginId = keyof typeof originLoadouts
+
+export interface CharacterAttributes extends CombatAttributes {
+  vigor: number
+  attunement: number
+  endurance: number
+  vitality: number
+  luck: number
+}
+
+export const originAttributes: Record<OriginId, CharacterAttributes> = {
+  knight: { vigor: 12, attunement: 10, endurance: 11, vitality: 15,
+    strength: 13, dexterity: 12, intelligence: 9, faith: 9, luck: 7 },
+  assassin: { vigor: 10, attunement: 14, endurance: 11, vitality: 10,
+    strength: 10, dexterity: 14, intelligence: 11, faith: 9, luck: 10 },
+  mage: { vigor: 9, attunement: 16, endurance: 9, vitality: 7,
+    strength: 7, dexterity: 12, intelligence: 16, faith: 7, luck: 12 },
+  cleric: { vigor: 10, attunement: 14, endurance: 9, vitality: 7,
+    strength: 12, dexterity: 8, intelligence: 7, faith: 16, luck: 13 },
+  wretch: { vigor: 10, attunement: 10, endurance: 10, vitality: 10,
+    strength: 10, dexterity: 10, intelligence: 10, faith: 10, luck: 10 },
+}
+
+export function originMaxFp(origin: OriginId): number {
+  const attunement = originAttributes[origin].attunement
+  return 50 + Math.min(20, Math.max(0, attunement - 10)) * 5
+    + Math.max(0, attunement - 30) * 2
+}

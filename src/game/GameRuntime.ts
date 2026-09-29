@@ -1,22 +1,19 @@
-import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 import { Engine } from '@babylonjs/core/Engines/engine'
-import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { HavokPlugin } from '@babylonjs/core/Physics/v2/Plugins/havokPlugin'
 import '@babylonjs/core/Physics/joinedPhysicsEngineComponent'
 import '@babylonjs/core/Physics/v2/physicsEngineComponent'
 import { Scene } from '@babylonjs/core/scene'
-import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import HavokPhysics from '@babylonjs/havok'
-import { createPrisonScenery, makeMaterial } from './prisonScene'
+import { createPrisonScenery } from './prisonScene'
 import { demoFragments, demoTimeNodes } from '../narrative/demoData'
 import { collectFragment, initialNarrative, selectFragment } from '../narrative/state'
 import type { NarrativeState } from '../narrative/model'
-import { buildTimelineView, type TimelineView } from '../narrative/view'
-import { attackDefinition, boxesOverlap, damagePlayer, initialCombat, stepCombat, type CombatState } from '../domain/combat'
-import { applyEnemyHit, enemyDefinition, initialEnemy, stepEnemy, type EnemyState } from '../domain/enemy'
+import { addFlaskCapacity, attackDefinitions, boxesOverlap, castSpell, initialCombat, refillAtCheckpoint, resolveIncomingHit, setMaxFp, stepCombat, stepDefense, useDaggerStep, useFlask, type CombatState, type HitOutcome, type SpellKind } from '../domain/combat'
+import { applyEnemyHit, enemyAttackName, enemyDefinition, initialEnemy, stepEnemy, type EnemyState } from '../domain/enemy'
+import { attackPoiseDamage, consumeExecution, increaseMaxPoise, poiseRules } from '../domain/poise'
 import { initialMovement, stepMovement, type MovementState } from '../domain/movement'
 import {
   activateCheckpoint,
@@ -28,92 +25,31 @@ import {
 } from '../domain/progression'
 import { floorAt, prisonFragmentPickups, prisonLocations, roomAt, surfacesByZone, type WorldZone } from '../world/prisonLayout'
 import { confirmChronicle, initialPrisonFlags, type PrisonFlags } from '../world/prisonProgression'
-import { originLoadouts, type OriginId } from '../world/originLoadouts'
-
-export interface GameSnapshot {
-  health: number
-  maxHealth: number
-  stamina: number
-  maxStamina: number
-  enemyHealth: number
-  enemyMaxHealth: number
-  attackPhase: string
-  grounded: boolean
-  souls: number
-  checkpointActive: boolean
-  dead: boolean
-  message: string
-  room: string
-  discoveredRooms: number
-  fragments: number
-  timelineOpen: boolean
-  timelineUnlocked: boolean
-  timeline: TimelineView
-  equipmentRecovered: boolean
-  exitKnowledge: boolean
-  spiritPerception: boolean
-  doubleJump: boolean
-  shortcutOpen: boolean
-  wardenKey: boolean
-  lockedDoorOpen: boolean
-  nearAltar: boolean
-  enemyName: string
-  totalRooms: number
-  origin: OriginId
-  originLevel: number
-  equipmentSummary: string
-  loot: string[]
-  prompt: string | null
-}
+import { originAttributes, originLoadouts, originMaxFp, type OriginId } from '../world/originLoadouts'
+import { activeOffhand, activeSkill, equipMain, equipOffhand, equipmentName, initialEquipment, offhandGear, ownedOffhands, ownedWeapons, shieldStats, toggleGrip, weaponPower, weapons, type EquipmentState, type OffhandGearId, type OffhandId, type WeaponId } from '../world/equipment'
+import { encounterIds, initialEncounters, type EncounterId } from './encounters'
+import { profileForEncounter } from './enemyProfiles'
+import { GameVisuals } from './GameVisuals'
+import { EnemyProjectiles } from './EnemyProjectiles'
+import { buildGameSnapshot } from './buildSnapshot'
+import { handlePrisonInteraction, prisonInteractionPrompt, type InteractionContext } from './prisonInteractions'
+import { clearGameSave, readGameSave, writeGameSave, type GameSaveData, type SaveStorage } from './saveGame'
+import type { GameSnapshot } from './GameSnapshot'
+export type { GameSnapshot } from './GameSnapshot'
 
 type SnapshotListener = (snapshot: GameSnapshot) => void
 
 const ENEMY_SPAWN_X = prisonLocations.soldierX
 const ENEMY_FLOOR_Y = floorAt(ENEMY_SPAWN_X) ?? 0
 const ALTAR_X = prisonLocations.altarX
-const encounterIds = ['cellGuard', 'corruptedKnight', 'upper1', 'upper2', 'upper3', 'upper4',
-  'inquisitor', 'warden', 'palaceGuard'] as const
-type EncounterId = typeof encounterIds[number]
-interface Encounter { enemy: EnemyState; health: number; maxHealth: number; floorY: number; minX: number; maxX: number; souls: number; name: string }
-
-function initialEncounters(): Record<EncounterId, Encounter> {
-  return {
-    cellGuard: { enemy: initialEnemy(-78.7), health: 80, maxHealth: 80,
-      floorY: 0, minX: -79.5, maxX: -76.6, souls: 30, name: '牢房疯兵' },
-    corruptedKnight: { enemy: initialEnemy(-5), health: 350, maxHealth: 350,
-      floorY: 2.5, minX: -11, maxX: 1, souls: 300, name: '腐化骑士' },
-    upper1: { enemy: initialEnemy(10), health: 80, maxHealth: 80,
-      floorY: 7, minX: 7.5, maxX: 12.5, souls: 50, name: '二楼狱卒' },
-    upper2: { enemy: initialEnemy(-2), health: 80, maxHealth: 80,
-      floorY: 7, minX: -4.5, maxX: 0.5, souls: 50, name: '二楼狱卒' },
-    upper3: { enemy: initialEnemy(-15), health: 80, maxHealth: 80,
-      floorY: 7, minX: -17.5, maxX: -12.5, souls: 50, name: '二楼狱卒' },
-    upper4: { enemy: initialEnemy(-27), health: 80, maxHealth: 80,
-      floorY: 7, minX: -29.5, maxX: -24.5, souls: 50, name: '二楼狱卒' },
-    inquisitor: { enemy: initialEnemy(prisonLocations.inquisitorX), health: 400, maxHealth: 400,
-      floorY: 2.5, minX: 29, maxX: 41, souls: 500, name: '责难官' },
-    warden: { enemy: initialEnemy(prisonLocations.wardenX), health: 1500, maxHealth: 1500,
-      floorY: 7, minX: -41, maxX: -34, souls: 5000, name: '典狱长' },
-    palaceGuard: { enemy: initialEnemy(prisonLocations.palaceGuardX), health: 200, maxHealth: 200,
-      floorY: 2.5, minX: 68, maxX: 77, souls: 200, name: '禁卫队长' },
-  }
-}
+interface SoulArrow { mesh: Mesh; x: number; y: number; direction: -1 | 1; target: EncounterId | 'soldier' | null; remaining: number; zone: WorldZone }
 
 export class GameRuntime {
   private readonly engine: Engine
   private readonly scene: Scene
-  private readonly playerMesh: Mesh
-  private readonly enemyMesh: Mesh
-  private readonly enemyWeaponMesh: Mesh
-  private readonly altarMesh: Mesh
-  private readonly slashMesh: Mesh
-  private readonly fragmentMeshes: { F01: Mesh; F03: Mesh; F07: Mesh; F10: Mesh }
-  private readonly gateMeshes: { shortcut: Mesh; cityGate: Mesh; lockedDoor: Mesh; gear: Mesh; archiveReward: Mesh;
-    cellKnife: Mesh; flowerRing: Mesh; ventShard: Mesh; ventWall: Mesh; ledgeRing: Mesh; ladderRungs: Mesh[] }
-  private readonly encounterMeshes: Record<EncounterId, Mesh>
-  private readonly camera: FreeCamera
-  private readonly soulMeshes = new Map<number, Mesh>()
-  private readonly soulMaterial: StandardMaterial
+  private readonly visuals: GameVisuals
+  private readonly enemyProjectiles: EnemyProjectiles
+  private readonly soulArrows: SoulArrow[] = []
   private readonly keys = new Set<string>()
   private movement: MovementState = initialMovement(prisonLocations.spawnX)
   private combat: CombatState = initialCombat()
@@ -122,14 +58,26 @@ export class GameRuntime {
   private flags: PrisonFlags = initialPrisonFlags()
   private zone: WorldZone = 'prison'
   private origin: OriginId = 'knight'
+  private equipment: EquipmentState = initialEquipment('knight')
   private readonly loot = new Set<string>()
+  private readonly acquiredWeapons = new Set<WeaponId>()
+  private readonly acquiredOffhands = new Set<OffhandGearId>()
   private progression: ProgressionState = initialProgression()
   private narrative: NarrativeState = initialNarrative(demoTimeNodes)
   private readonly discoveredRooms = new Set<string>(['Cell'])
+  private saveAvailable = false
   private timelineOpen = false
   private facing: -1 | 1 = 1
   private jumpQueued = false
-  private attackQueued = false
+  private attackQueued: 'light' | 'heavy' | null = null
+  private shieldBashQueued = false
+  private flaskQueued = false
+  private defenseQueued = false
+  private prayerSequence: string[] | null = null
+  private radiantRemaining = 0
+  private sightRemaining = 0
+  private magicGuardRemaining = 0
+  private flurryFlashRemaining = 0
   private interactQueued = false
   private respawnRemaining = 0
   private message = '向右穿过牢房，探索监狱。'
@@ -141,20 +89,10 @@ export class GameRuntime {
     this.scene = scene
     this.listener = listener
     const scenery = createPrisonScenery(scene)
-    this.playerMesh = scenery.player
-    this.enemyMesh = scenery.enemy
-    this.enemyWeaponMesh = scenery.enemyWeapon
-    this.altarMesh = scenery.altar
-    this.slashMesh = scenery.slash
-    this.fragmentMeshes = scenery.fragmentMeshes
-    this.gateMeshes = scenery.gateMeshes
-    this.encounterMeshes = { cellGuard: scenery.cellGuard, corruptedKnight: scenery.corruptedKnight,
-      upper1: scenery.upperGuards[0], upper2: scenery.upperGuards[1],
-      upper3: scenery.upperGuards[2], upper4: scenery.upperGuards[3],
-      inquisitor: scenery.inquisitor, warden: scenery.warden, palaceGuard: scenery.palaceGuard }
-    this.camera = scenery.camera
-    this.soulMaterial = makeMaterial(scene, 'soul light', new Color3(0.3, 0.7, 0.84), new Color3(0.12, 0.6, 0.8))
+    this.visuals = new GameVisuals(scene, scenery)
+    this.enemyProjectiles = new EnemyProjectiles(scene)
     this.updateCameraBounds()
+    this.loadCheckpointSave()
     window.addEventListener('keydown', this.onKeyDown)
     window.addEventListener('keyup', this.onKeyUp)
     window.addEventListener('blur', this.onBlur)
@@ -188,32 +126,44 @@ export class GameRuntime {
     }
   }
 
-  reset(): void {
+  reset(clearSaved = true): void {
+    if (clearSaved) {
+      const storage = this.saveStorage()
+      if (storage) clearGameSave(storage)
+      this.saveAvailable = false
+    }
     this.movement = initialMovement(prisonLocations.spawnX)
-    this.combat = initialCombat()
+    this.combat = initialCombat(originMaxFp(this.origin))
     this.enemy = initialEnemy(ENEMY_SPAWN_X)
     this.encounters = initialEncounters()
     this.flags = initialPrisonFlags()
     this.loot.clear()
+    this.acquiredWeapons.clear()
+    this.acquiredOffhands.clear()
+    this.equipment = initialEquipment(this.origin)
     this.zone = 'prison'
-    this.camera.position.set(prisonLocations.spawnX, 3.1, -18)
-    this.camera.setTarget(new Vector3(prisonLocations.spawnX, 2.2, 0))
+    this.visuals.reset(prisonLocations.spawnX)
     this.progression = initialProgression()
     this.narrative = initialNarrative(demoTimeNodes)
     this.facing = 1
     this.jumpQueued = false
-    this.attackQueued = false
+    this.attackQueued = null
+    this.shieldBashQueued = false
+    this.flaskQueued = false
+    this.defenseQueued = false
+    this.prayerSequence = null
+    this.radiantRemaining = 0
+    this.sightRemaining = 0
+    this.magicGuardRemaining = 0
+    this.flurryFlashRemaining = 0
     this.interactQueued = false
     this.respawnRemaining = 0
     this.timelineOpen = false
     this.message = '向右穿过牢房，探索监狱。'
     this.discoveredRooms.clear()
     this.discoveredRooms.add('Cell')
-    for (const mesh of this.soulMeshes.values()) mesh.dispose()
-    this.soulMeshes.clear()
-    this.playerMesh.isVisible = true
-    this.enemyMesh.isVisible = true
-    this.enemyWeaponMesh.isVisible = true
+    this.clearSoulArrows()
+    this.enemyProjectiles.clear()
     this.syncFragmentMeshes()
     this.syncWorldMeshes()
     this.onBlur()
@@ -223,8 +173,48 @@ export class GameRuntime {
   chooseOrigin(origin: OriginId): void {
     if (this.flags.equipmentRecovered || !Object.hasOwn(originLoadouts, origin)) return
     this.origin = origin
+    this.equipment = initialEquipment(origin)
+    this.combat = setMaxFp(this.combat, originMaxFp(origin))
     this.message = `选择${originLoadouts[origin].name}出身。装备仍在监狱走廊的没收架上。`
     this.publishSnapshot()
+  }
+
+  equipMainWeapon(weapon: WeaponId): void {
+    if (!this.canSwitchEquipment()) return
+    const next = equipMain(this.equipment, weapon,
+      ownedWeapons(this.origin, this.acquiredWeapons))
+    if (next === this.equipment) return
+    this.equipment = next
+    this.magicGuardRemaining = 0
+    this.message = `主手换成${equipmentName(weapon)}。当前 L 战技：${this.skillName}。`
+    this.publishSnapshot()
+  }
+
+  equipOffhandItem(item: OffhandId): void {
+    if (!this.canSwitchEquipment()) return
+    const next = equipOffhand(this.equipment, item,
+      ownedOffhands(this.origin, this.acquiredWeapons, this.acquiredOffhands))
+    if (next === this.equipment) return
+    this.equipment = next
+    this.magicGuardRemaining = 0
+    this.message = `副手换成${equipmentName(item)}。当前 L 战技：${this.skillName}。`
+    this.publishSnapshot()
+  }
+
+  toggleWeaponGrip(): void {
+    if (!this.canSwitchEquipment()) return
+    this.equipment = toggleGrip(this.equipment)
+    this.magicGuardRemaining = 0
+    this.message = this.equipment.twoHanded
+      ? `双手握持${equipmentName(this.equipment.mainHand)}：攻击提高 20%，副手暂时停用。`
+      : `恢复单手握持${equipmentName(this.equipment.mainHand)}，副手重新生效。`
+    this.publishSnapshot()
+  }
+
+  private canSwitchEquipment(): boolean {
+    return this.flags.equipmentRecovered && this.combat.player.health > 0
+      && this.combat.attack.phase === 'idle' && this.combat.defense.mode === 'idle'
+      && this.prayerSequence === null && this.respawnRemaining <= 0
   }
 
   dispose(): void {
@@ -234,6 +224,8 @@ export class GameRuntime {
     window.removeEventListener('resize', this.onResize)
     this.engine.getRenderingCanvas()?.removeEventListener('pointerdown', this.focusCanvas)
     this.engine.stopRenderLoop()
+    this.clearSoulArrows()
+    this.enemyProjectiles.clear()
     this.scene.dispose()
     this.engine.dispose()
   }
@@ -264,16 +256,84 @@ export class GameRuntime {
       return
     }
     const previous = this.flags
+    this.progression = activateCheckpoint(this.progression, this.movement.x, ALTAR_X)
+    this.combat = refillAtCheckpoint(this.combat)
+    this.enemy = initialEnemy(ENEMY_SPAWN_X)
     this.flags = confirmChronicle(this.flags, this.narrative)
     this.message = !previous.doubleJump && this.flags.doubleJump ? '祭坛回应政变线：获得二段跳。回望大厅上方。'
       : !previous.spiritPerception && this.flags.spiritPerception ? '祭坛回应前三段历史：获得监狱内的临时灵力感知。调查入口公告板。'
       : !previous.exitKnowledge && this.flags.exitKnowledge ? '你认出了首相文书通道。回到大厅左侧正门调查。'
       : !previous.dash && this.flags.dash ? '祭坛回应勤王线：获得疾跑突进。'
-      : '祭坛记下了你的解释；没有新的地图变化。'
+      : '祭坛已点亮，生命与原素瓶已补满。按 T 选择证据，再按 E 提交解释。'
     this.syncFragmentMeshes()
     this.syncWorldMeshes()
     this.timelineOpen = false
     this.onBlur()
+    const saved = this.saveAtAltar()
+    this.message += saved ? ' 进度已存档。' : ' 本地存档不可用。'
+    this.publishSnapshot()
+  }
+
+  private saveStorage(): SaveStorage | null {
+    try { return window.localStorage } catch { return null }
+  }
+
+  private saveAtAltar(): boolean {
+    const storage = this.saveStorage()
+    if (!storage) return false
+    const save: GameSaveData = {
+      version: 1,
+      savedAt: Date.now(),
+      origin: this.origin,
+      equipment: { ...this.equipment },
+      flags: { ...this.flags },
+      loot: [...this.loot],
+      acquiredWeapons: [...this.acquiredWeapons],
+      acquiredOffhands: [...this.acquiredOffhands],
+      progression: structuredClone(this.progression),
+      narrative: structuredClone(this.narrative),
+      discoveredRooms: [...this.discoveredRooms],
+      defeatedEncounters: encounterIds.filter(id => this.encounters[id].health <= 0),
+      maxFlasks: this.combat.maxFlasks,
+    }
+    const written = writeGameSave(storage, save)
+    this.saveAvailable = written || readGameSave(storage) !== null
+    return written
+  }
+
+  loadCheckpointSave(): void {
+    const storage = this.saveStorage()
+    const save = storage ? readGameSave(storage) : null
+    if (!save) {
+      this.saveAvailable = false
+      return
+    }
+    this.origin = save.origin
+    this.reset(false)
+    this.flags = { ...initialPrisonFlags(), ...save.flags }
+    this.progression = structuredClone(save.progression)
+    this.narrative = structuredClone(save.narrative)
+    this.combat = initialCombat(originMaxFp(save.origin))
+    this.combat = { ...this.combat, flasks: save.maxFlasks, maxFlasks: save.maxFlasks }
+    for (const item of save.loot) this.loot.add(item)
+    for (const item of save.acquiredWeapons) this.acquiredWeapons.add(item)
+    for (const item of save.acquiredOffhands) this.acquiredOffhands.add(item)
+    this.equipment = ownedWeapons(save.origin, this.acquiredWeapons).includes(save.equipment.mainHand)
+      && ownedOffhands(save.origin, this.acquiredWeapons, this.acquiredOffhands).includes(save.equipment.offHand)
+      ? { ...save.equipment } : initialEquipment(save.origin)
+    for (const id of save.defeatedEncounters) {
+      const encounter = this.encounters[id]
+      encounter.health = 0
+      encounter.enemy = applyEnemyHit(encounter.enemy, 0)
+    }
+    this.discoveredRooms.clear()
+    for (const room of save.discoveredRooms) this.discoveredRooms.add(room)
+    this.travel('prison', save.progression.checkpointX, floorAt(save.progression.checkpointX) ?? 2.5)
+    this.saveAvailable = true
+    this.message = '已载入祭坛存档。'
+    this.syncFragmentMeshes()
+    this.syncWorldMeshes()
+    this.syncSoulMeshes()
     this.publishSnapshot()
   }
 
@@ -288,21 +348,50 @@ export class GameRuntime {
       return
     }
     if (this.timelineOpen) return
-    if (['KeyA', 'KeyD', 'KeyW', 'Space', 'KeyJ', 'KeyE', 'ShiftLeft', 'ShiftRight'].includes(event.code)) event.preventDefault()
+    if (this.prayerSequence !== null && ['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) {
+      event.preventDefault()
+      if (!event.repeat && this.prayerSequence.length < 4) {
+        this.prayerSequence.push(event.code.slice(3))
+        this.message = `祷言指令：${this.prayerSequence.join(' → ')}。松开 L 释放。`
+        this.publishSnapshot()
+      }
+      return
+    }
+    if (['KeyA', 'KeyD', 'KeyW', 'Space', 'KeyF', 'KeyJ', 'KeyK', 'KeyL', 'KeyQ', 'KeyR', 'KeyE', 'ShiftLeft', 'ShiftRight'].includes(event.code)) event.preventDefault()
     this.keys.add(event.code)
     if (!event.repeat && (event.code === 'Space' || event.code === 'KeyW')) this.jumpQueued = true
-    if (!event.repeat && event.code === 'KeyJ') this.attackQueued = true
+    if (!event.repeat && event.code === 'KeyJ') this.attackQueued = 'light'
+    if (!event.repeat && event.code === 'KeyK') this.attackQueued = 'heavy'
+    if (!event.repeat && event.code === 'KeyQ') this.shieldBashQueued = true
+    if (!event.repeat && event.code === 'KeyR') this.flaskQueued = true
+    if (!event.repeat && event.code === 'KeyF') this.toggleWeaponGrip()
+    if (!event.repeat && event.code === 'KeyL') {
+      this.defenseQueued = true
+      if (this.currentSkill === 'prayer'
+        && !(this.movement.grounded && (this.keys.has('KeyA') !== this.keys.has('KeyD'))
+          && (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight')))
+        && this.combat.attack.phase === 'idle' && this.combat.defense.mode === 'idle') {
+        this.prayerSequence = []
+        this.message = '圣典已展开：按 W/A/S/D 输入祷言，松开 L 释放。'
+        this.publishSnapshot()
+      }
+    }
     if (!event.repeat && event.code === 'KeyE') this.interactQueued = true
   }
 
   private readonly onKeyUp = (event: KeyboardEvent): void => {
     this.keys.delete(event.code)
+    if (event.code === 'KeyL' && this.prayerSequence !== null) this.finishPrayer()
   }
 
   private readonly onBlur = (): void => {
     this.keys.clear()
     this.jumpQueued = false
-    this.attackQueued = false
+    this.attackQueued = null
+    this.shieldBashQueued = false
+    this.flaskQueued = false
+    this.defenseQueued = false
+    this.prayerSequence = null
     this.interactQueued = false
   }
 
@@ -312,11 +401,214 @@ export class GameRuntime {
   }
 
   private updateCameraBounds(): void {
-    const aspect = this.engine.getRenderWidth() / Math.max(1, this.engine.getRenderHeight())
-    this.camera.orthoTop = 5.5
-    this.camera.orthoBottom = -5.5
-    this.camera.orthoLeft = -5.5 * aspect
-    this.camera.orthoRight = 5.5 * aspect
+    this.visuals.updateCameraBounds(this.engine)
+  }
+
+  private get shieldReduction(): number {
+    return this.magicGuardRemaining > 0 ? 1
+      : this.flags.equipmentRecovered ? shieldStats(this.equipment).reduction : 0
+  }
+
+  private get parryBonusFrames(): number {
+    return this.flags.equipmentRecovered ? shieldStats(this.equipment).parryBonusFrames : 0
+  }
+
+  private get currentSkill(): ReturnType<typeof activeSkill> {
+    return this.flags.equipmentRecovered ? activeSkill(this.equipment) : 'none'
+  }
+
+  private get skillName(): string {
+    if (this.currentSkill === 'catalog') return weapons[this.equipment.mainHand].skillName
+    return ({ shield: '盾牌弹反/格挡', prayer: '圣典祷言', holyGuard: '圣盾格挡',
+      flurry: '连续突刺', soulArrow: '追踪灵魂箭', blessing: '祝福',
+      daggerStep: '短刀闪避步', none: '无', catalog: '待接入' } as Record<ReturnType<typeof activeSkill>, string>)[this.currentSkill]
+  }
+
+  private get currentWeaponPower(): number {
+    return this.flags.equipmentRecovered ? weaponPower(this.equipment, originAttributes[this.origin]) : 0.4
+  }
+
+  private get currentWeaponReach(): number {
+    return this.flags.equipmentRecovered ? weapons[this.equipment.mainHand].reach : 1.0
+  }
+
+  private receiveHit(damage: number, attackerX: number, attackerName: string): HitOutcome {
+    const result = resolveIncomingHit(this.combat, damage, this.shieldReduction,
+      this.facing * (attackerX - this.movement.x) > 0, this.parryBonusFrames)
+    this.combat = result.state
+    const interruptedPrayer = this.prayerSequence !== null
+    if (result.outcome === 'hit' || result.outcome === 'guardBroken') this.prayerSequence = null
+    this.message = result.outcome === 'parried' ? `弹反${attackerName}！对方露出破绽。`
+      : result.outcome === 'dodged' ? `闪避了${attackerName}的攻击。`
+        : result.outcome === 'blocked' ? `格挡了${attackerName}的攻击。`
+          : result.outcome === 'guardBroken' ? `精力耗尽，${attackerName}击破了盾牌。`
+            : interruptedPrayer ? `${attackerName}击中了你，祷言被打断。` : `${attackerName}击中了你。`
+    return result.outcome
+  }
+
+  private finishPrayer(): void {
+    const sequence = this.prayerSequence?.join('') ?? ''
+    this.prayerSequence = null
+    const prayers: Record<string, SpellKind> = { WSW: 'smallHeal', WAD: 'radiantWeapon', ADS: 'divineSight' }
+    const spell = prayers[sequence]
+    if (!spell) {
+      this.message = sequence ? `祷言指令 ${sequence} 未对应已知祷言。` : '圣典合上；未输入祷言。'
+      this.publishSnapshot()
+      return
+    }
+    const next = castSpell(this.combat, spell)
+    if (next === this.combat) {
+      this.message = spell === 'smallHeal' && this.combat.player.health >= this.combat.player.maxHealth
+        ? '生命已满，无需施放小回复。' : 'FP 不足，祷言无法施放。'
+      this.publishSnapshot()
+      return
+    }
+    this.combat = next
+    if (spell === 'radiantWeapon') {
+      this.radiantRemaining = 60
+      this.message = '光辉武器生效 60 秒：近战伤害提高。'
+    } else if (spell === 'divineSight') {
+      this.sightRemaining = 30
+      this.message = '神识生效 30 秒：敌人轮廓发出蓝光。'
+    } else this.message = '小回复恢复了 30% 最大生命。'
+    this.publishSnapshot()
+  }
+
+  private activateWeaponSkill(direction: -1 | 0 | 1): boolean {
+    const skill = this.currentSkill
+    if (skill === 'shield' || skill === 'prayer') return false
+    if (this.combat.attack.phase !== 'idle' || this.combat.defense.mode !== 'idle') return true
+    if (skill === 'soulArrow') {
+      this.castSoulArrow()
+      return true
+    }
+    if (skill === 'daggerStep') {
+      const next = useDaggerStep(this.combat, direction || this.facing)
+      this.message = next === this.combat ? '短刀闪避步暂不可用：检查 FP 或冷却。' : '短刀闪避步！'
+      this.combat = next
+      return true
+    }
+    if (skill === 'none') {
+      this.message = '当前武器没有 L 键战技。'
+      return true
+    }
+    if (skill === 'catalog') {
+      this.message = '该武器战技将随所属关卡接入。'
+      return true
+    }
+    const next = castSpell(this.combat, skill)
+    if (next === this.combat) {
+      this.message = skill === 'blessing' && this.combat.player.health >= this.combat.player.maxHealth
+        ? '生命已满，无需施放祝福。' : 'FP 不足，无法施放武器战技。'
+      return true
+    }
+    this.combat = next
+    if (skill === 'blessing') this.message = '钉锤祝福恢复了 20% 最大生命。'
+    else if (skill === 'holyGuard') {
+      this.magicGuardRemaining = 2
+      this.combat = { ...this.combat, defense: { ...this.combat.defense, mode: 'guard', elapsed: 0 } }
+      this.message = '圣盾格挡生效：按住 L，在两秒内抵御正面攻击。'
+    } else if (skill === 'flurry') this.useFlurry()
+    return true
+  }
+
+  private useFlurry(): void {
+    const maxDistance = this.currentWeaponReach + 0.7
+    const candidates: { id: EncounterId | 'soldier'; distance: number }[] = []
+    const distanceTo = (x: number, y: number): number => {
+      const distance = this.facing * (x - this.movement.x)
+      return distance > 0 && distance <= maxDistance && Math.abs(y - this.movement.y) < 1.5
+        ? distance : Infinity
+    }
+    if (this.zone === 'prison' && this.combat.enemy.health > 0) {
+      candidates.push({ id: 'soldier', distance: distanceTo(this.enemy.x, ENEMY_FLOOR_Y) })
+    }
+    for (const id of encounterIds) {
+      const encounter = this.encounters[id]
+      if (encounter.health <= 0 || (id === 'palaceGuard' ? 'city' : 'prison') !== this.zone) continue
+      candidates.push({ id, distance: distanceTo(encounter.enemy.x, encounter.floorY) })
+    }
+    const nearest = candidates.sort((a, b) => a.distance - b.distance)[0]
+    if (!nearest || !Number.isFinite(nearest.distance)) {
+      this.message = '连续突刺挥空了。'
+      this.flurryFlashRemaining = 0.3
+      return
+    }
+    const strikeDamage = Math.round(attackDefinitions.light.damage * this.currentWeaponPower * 0.7)
+    for (let strike = 0; strike < 3; strike += 1) {
+      if (nearest.id === 'soldier') this.damageSoldier(strikeDamage, poiseRules.light)
+      else this.damageEncounter(nearest.id, strikeDamage * 2, poiseRules.light)
+    }
+    this.flurryFlashRemaining = 0.3
+    if (nearest.id === 'soldier' ? this.combat.enemy.health > 0 : this.encounters[nearest.id].health > 0) {
+      this.message = '连续突刺三连击命中。'
+    }
+  }
+
+  private castSoulArrow(): void {
+    if (this.combat.attack.phase !== 'idle' || this.combat.defense.mode !== 'idle') return
+    const next = castSpell(this.combat, 'soulArrow')
+    if (next === this.combat) {
+      this.message = 'FP 不足，无法释放追踪灵魂箭。'
+      return
+    }
+    this.combat = next
+    const targets: { id: EncounterId | 'soldier'; distance: number }[] = []
+    const distanceTo = (x: number, y: number): number => this.facing * (x - this.movement.x) > 0
+      && Math.abs(y - this.movement.y) < 1.8 ? Math.abs(x - this.movement.x) : Infinity
+    if (this.zone === 'prison' && this.combat.enemy.health > 0) {
+      targets.push({ id: 'soldier', distance: distanceTo(this.enemy.x, ENEMY_FLOOR_Y) })
+    }
+    for (const id of encounterIds) {
+      const encounter = this.encounters[id]
+      if (encounter.health <= 0 || (id === 'palaceGuard' ? 'city' : 'prison') !== this.zone) continue
+      targets.push({ id, distance: distanceTo(encounter.enemy.x, encounter.floorY) })
+    }
+    const nearest = targets.sort((a, b) => a.distance - b.distance)[0]
+    const target = nearest && nearest.distance <= 8 ? nearest.id : null
+    const mesh = MeshBuilder.CreateSphere('tracking soul arrow', { diameter: 0.28 }, this.scene)
+    mesh.material = this.visuals.spellMaterial
+    const x = this.movement.x + this.facing * 0.55
+    const y = this.movement.y + 1
+    mesh.position.set(x, y, -0.15)
+    this.soulArrows.push({ mesh, x, y, direction: this.facing, target, remaining: 0.8, zone: this.zone })
+    this.message = target ? '释放追踪灵魂箭，锁定前方敌人。' : '释放灵魂箭，前方没有可锁定目标。'
+  }
+
+  private clearSoulArrows(): void {
+    for (const arrow of this.soulArrows) arrow.mesh.dispose()
+    this.soulArrows.length = 0
+  }
+
+  private stepSoulArrows(dt: number): void {
+    for (let index = this.soulArrows.length - 1; index >= 0; index -= 1) {
+      const arrow = this.soulArrows[index]
+      arrow.remaining -= dt
+      const encounter = arrow.target && arrow.target !== 'soldier' ? this.encounters[arrow.target] : null
+      const targetAlive = arrow.zone === this.zone && (arrow.target === 'soldier'
+        ? this.combat.enemy.health > 0 : encounter ? encounter.health > 0 : false)
+      const targetX = targetAlive ? arrow.target === 'soldier' ? this.enemy.x : encounter!.enemy.x : null
+      const targetY = targetAlive ? arrow.target === 'soldier' ? ENEMY_FLOOR_Y + 1 : encounter!.floorY + 1 : null
+      if (targetX !== null && targetY !== null) {
+        const dx = targetX - arrow.x
+        const dy = targetY - arrow.y
+        const distance = Math.hypot(dx, dy)
+        if (distance <= 14 * dt + 0.35) {
+          if (arrow.target === 'soldier') this.damageSoldier(60)
+          else if (arrow.target) this.damageEncounter(arrow.target, 60)
+          arrow.mesh.dispose()
+          this.soulArrows.splice(index, 1)
+          continue
+        }
+        arrow.x += dx / distance * 14 * dt
+        arrow.y += dy / distance * 14 * dt
+      } else arrow.x += arrow.direction * 14 * dt
+      arrow.mesh.position.set(arrow.x, arrow.y, -0.15)
+      if (arrow.remaining <= 0) {
+        arrow.mesh.dispose()
+        this.soulArrows.splice(index, 1)
+      }
+    }
   }
 
   private tick(dt: number): void {
@@ -328,12 +620,26 @@ export class GameRuntime {
       return
     }
 
-    const direction = Number(this.keys.has('KeyD')) - Number(this.keys.has('KeyA')) as -1 | 0 | 1
+    const prayerActive = this.prayerSequence !== null
+    const direction = prayerActive ? 0
+      : Number(this.keys.has('KeyD')) - Number(this.keys.has('KeyA')) as -1 | 0 | 1
     if (direction !== 0) this.facing = direction
     const sprinting = direction !== 0 && this.movement.grounded && this.combat.player.stamina > 0
       && (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight'))
+    if (prayerActive) this.movement.velocityX = 0
+    if (this.defenseQueued && !sprinting && this.flags.equipmentRecovered
+      && this.activateWeaponSkill(direction)) this.defenseQueued = false
+    this.combat = stepDefense(this.combat, { pressed: this.defenseQueued, held: this.keys.has('KeyL'),
+      sprinting, direction, shieldReduction: this.shieldReduction }, dt)
+    this.defenseQueued = false
+    const dodging = this.combat.defense.mode === 'dodge'
+    const staggered = this.combat.defense.mode === 'stagger'
+    if (staggered) this.movement.velocityX = 0
     this.movement = stepMovement(this.movement,
-      { direction, jumpPressed: this.jumpQueued, sprinting, extraJumps: this.flags.doubleJump ? 1 : 0 },
+      { direction: staggered ? 0 : direction, jumpPressed: this.jumpQueued && !dodging && !staggered && !prayerActive,
+        sprinting: sprinting && !dodging && !staggered,
+        dodgeDirection: dodging ? this.combat.defense.direction : undefined,
+        extraJumps: this.flags.doubleJump ? 1 : 0 },
       dt, surfacesByZone[this.zone])
     this.jumpQueued = false
 
@@ -356,37 +662,77 @@ export class GameRuntime {
 
     if (this.interactQueued) this.interact()
 
+    if (this.flaskQueued) {
+      const healed = useFlask(this.combat)
+      if (healed !== this.combat) {
+        this.combat = healed
+        this.message = `使用原素瓶，恢复生命。剩余 ${healed.flasks} / ${healed.maxFlasks} 瓶。`
+      } else if (this.combat.flasks === 0) this.message = '原素瓶已用尽；在祭坛补充。'
+      this.flaskQueued = false
+    }
+
     const enemyStep = stepEnemy(this.enemy, this.movement.x, this.movement.y, dt, ENEMY_FLOOR_Y)
     this.enemy = {
       ...enemyStep.enemy,
       x: Math.max(-39, Math.min(-23, enemyStep.enemy.x)),
     }
     if (enemyStep.playerDamage > 0) {
-      this.combat = damagePlayer(this.combat, enemyStep.playerDamage)
-      this.message = '灰烬士兵击中了你。'
+      const outcome = this.receiveHit(enemyStep.playerDamage, this.enemy.x, '灰烬士兵')
+      if (outcome === 'parried') {
+        this.enemy = applyEnemyHit(this.enemy, this.combat.enemy.health, poiseRules.parry)
+        if (this.enemy.poise.exhaustedRemaining > 0) this.message = '弹反击溃灰烬士兵韧性！3 秒内可处决。'
+      }
     }
     const previousEnemyHealth = this.combat.enemy.health
+    const offhand = activeOffhand(this.equipment)
+    const shieldEquipped = this.flags.equipmentRecovered && offhand !== null
+      && offhand in offhandGear && offhandGear[offhand as OffhandGearId].kind === 'shield'
+    if (this.shieldBashQueued && !shieldEquipped) this.message = '盾击需要单手装备盾牌。'
     this.combat = stepCombat(
       this.combat,
-      this.attackQueued,
+      this.attackQueued === 'light' && !prayerActive,
       this.movement.x,
       this.movement.y,
       this.facing,
       this.enemy.x,
       dt,
-      sprinting,
+      sprinting && !dodging,
       ENEMY_FLOOR_Y,
+      this.attackQueued === 'heavy' && !prayerActive,
+      this.currentWeaponPower * (this.radiantRemaining > 0 ? 1.2 : 1),
+      this.currentWeaponReach,
+      !this.movement.grounded,
+      this.enemy.poise.executionAvailable && this.combat.attack.kind !== 'shieldBash'
+        ? poiseRules.executionMultiplier : 1,
+      this.shieldBashQueued && shieldEquipped && !prayerActive,
     )
-    this.attackQueued = false
-    if (this.combat.enemy.health < previousEnemyHealth) {
-      this.enemy = applyEnemyHit(this.enemy, this.combat.enemy.health)
-      this.message = this.combat.enemy.health === 0 ? '敌人倒下，魂已落在地面。' : '命中灰烬士兵。'
-      if (this.combat.enemy.health === 0) {
-        this.progression = dropEnemySouls(this.progression, this.enemy.x, enemyDefinition.souls, ENEMY_FLOOR_Y)
-      }
-    }
+    this.attackQueued = null
+    this.shieldBashQueued = false
+    this.afterSoldierHit(previousEnemyHealth,
+      attackPoiseDamage(this.combat.attack.kind, this.combat.attack.jumping),
+      this.combat.attack.kind !== 'shieldBash')
 
     this.stepEncounters(dt)
+    this.enemyProjectiles.step(dt, this.movement.x, this.movement.y, this.zone, projectile => {
+      const encounter = this.encounters[projectile.ownerId]
+      const outcome = this.receiveHit(projectile.damage, projectile.x,
+        `${encounter.name}的${projectile.name}`)
+      if (outcome === 'parried' && encounter.health > 0) {
+        encounter.enemy = applyEnemyHit(encounter.enemy, encounter.health, poiseRules.parry)
+        if (encounter.enemy.poise.exhaustedRemaining > 0) {
+          this.message = `弹反击溃${encounter.name}韧性！3 秒内可处决。`
+        }
+      }
+    })
+    this.stepSoulArrows(dt)
+    this.radiantRemaining = Math.max(0, this.radiantRemaining - dt)
+    this.sightRemaining = Math.max(0, this.sightRemaining - dt)
+    this.magicGuardRemaining = Math.max(0, this.magicGuardRemaining - dt)
+    this.flurryFlashRemaining = Math.max(0, this.flurryFlashRemaining - dt)
+    if (this.magicGuardRemaining === 0 && this.combat.defense.mode === 'guard'
+      && shieldStats(this.equipment).reduction === 0) {
+      this.combat.defense = { ...this.combat.defense, mode: 'idle', elapsed: 0 }
+    }
 
     const soulsBefore = this.progression.souls
     this.progression = collectSouls(this.progression, this.movement.x, this.movement.y)
@@ -395,46 +741,18 @@ export class GameRuntime {
       this.progression = loseSoulsOnDeath(this.progression, this.movement.x, this.movement.y)
       this.respawnRemaining = 1.4
       this.message = '你死了。即将返回上一个检查点。'
-      this.playerMesh.isVisible = false
+      this.visuals.setPlayerVisible(false)
       this.publishSnapshot()
     }
 
-    this.playerMesh.position.set(this.movement.x, this.movement.y + 0.9, 0)
-    this.playerMesh.rotation.z = this.facing === 1 ? -0.05 : 0.05
-    this.enemyMesh.isVisible = this.enemy.mode !== 'dead'
-    this.enemyWeaponMesh.isVisible = this.enemy.mode !== 'dead'
-    this.enemyMesh.position.set(this.enemy.x, ENEMY_FLOOR_Y + 0.9, 0)
-    this.enemyWeaponMesh.position.set(this.enemy.x + this.enemy.facing * 0.55, ENEMY_FLOOR_Y + 0.85, -0.1)
-    for (const id of encounterIds) {
-      const encounter = this.encounters[id]
-      const mesh = this.encounterMeshes[id]
-      mesh.isVisible = encounter.health > 0
-      mesh.position.set(encounter.enemy.x, encounter.floorY + (id === 'warden' ? 1.4 : id === 'inquisitor' ? 1.15 : 1), 0)
-      const material = mesh.material as StandardMaterial
-      material.emissiveColor = encounter.enemy.mode === 'windup' || encounter.enemy.mode === 'active'
-        ? new Color3(0.5, 0.12, 0.08) : Color3.Black()
-    }
-    const enemyMaterial = this.enemyMesh.material as StandardMaterial
-    enemyMaterial.emissiveColor = this.enemy.mode === 'windup' || this.enemy.mode === 'active'
-      ? new Color3(0.55, 0.11, 0.07)
-      : Color3.Black()
-    const altarMaterial = this.altarMesh.material as StandardMaterial
-    altarMaterial.emissiveColor = this.progression.checkpointActive
-      ? new Color3(0.4, 0.22, 0.08)
-      : Color3.Black()
-    this.syncSoulMeshes()
-    this.syncWorldMeshes()
-    this.slashMesh.isVisible = this.combat.attack.phase === 'active'
-    this.slashMesh.position.set(this.movement.x + this.facing * 0.95, this.movement.y + 0.95, -0.05)
-    const halfViewWidth = 5.5 * this.engine.getRenderWidth() / Math.max(1, this.engine.getRenderHeight())
-    const surfaces = surfacesByZone[this.zone]
-    const zoneMin = Math.min(...surfaces.map(surface => surface.minX))
-    const zoneMax = Math.max(...surfaces.map(surface => surface.maxX))
-    const targetX = Math.max(zoneMin + halfViewWidth, Math.min(zoneMax - halfViewWidth, this.movement.x))
-    const targetY = Math.max(2.2, Math.min(9.5, this.movement.y + 2.2))
-    this.camera.position.x += (targetX - this.camera.position.x) * Math.min(1, dt * 4)
-    this.camera.position.y += (targetY + 0.9 - this.camera.position.y) * Math.min(1, dt * 4)
-    this.camera.setTarget(new Vector3(this.camera.position.x, this.camera.position.y - 0.9, 0))
+    this.visuals.renderFrame({ movement: this.movement, combat: this.combat,
+      enemy: this.enemy, enemyFloorY: ENEMY_FLOOR_Y, encounters: this.encounters,
+      equipment: this.equipment, equipmentRecovered: this.flags.equipmentRecovered,
+      facing: this.facing, zone: this.zone, flags: this.flags, loot: this.loot,
+      narrative: this.narrative, progression: this.progression,
+      respawnRemaining: this.respawnRemaining, sightRemaining: this.sightRemaining,
+      flurryFlashRemaining: this.flurryFlashRemaining,
+      currentWeaponReach: this.currentWeaponReach }, this.engine, dt)
 
     this.publishAtInterval(dt)
   }
@@ -444,11 +762,11 @@ export class GameRuntime {
   }
 
   private travel(zone: WorldZone, x: number, y = 2.5): void {
+    this.clearSoulArrows()
+    this.enemyProjectiles.clear()
     this.zone = zone
     this.movement = initialMovement(x, y)
-    this.camera.position.x = x
-    this.camera.position.y = y + 3.1
-    this.camera.setTarget(new Vector3(x, y + 2.2, 0))
+    this.visuals.travel(x, y)
   }
 
   private collect(id: string): boolean {
@@ -461,116 +779,17 @@ export class GameRuntime {
 
   private interact(): void {
     this.interactQueued = false
-    const x = this.movement.x
-    const y = this.movement.y
-    if (this.zone === 'prison') {
-      if (this.near(prisonLocations.equipmentX) && y < 2) {
-        if (!this.flags.equipmentRecovered) {
-          this.flags.equipmentRecovered = true
-          const gear = originLoadouts[this.origin]
-          this.message = `取回${gear.name}装备：${gear.mainHand}、${gear.offHand}、四部位防具与${gear.other}。`
-        }
-      } else if (this.near(-75) && y < 2 && !this.loot.has('备用短刀')) {
-        this.loot.add('备用短刀')
-        this.message = '从牢房 D 取走备用短刀。'
-      } else if (this.near(-65) && y < 0 && !this.loot.has('花木戒指')) {
-        this.loot.add('花木戒指')
-        this.message = '在下水道石桥下找到花木戒指。'
-      } else if (this.near(-55.5) && y < 1 && !this.loot.has('通风管原素瓶碎片')) {
-        this.loot.add('通风管原素瓶碎片')
-        this.message = '循着羽毛调查假墙，在乌鸦巢找到原素瓶碎片。'
-      } else if (this.near(-8) && y > 5.7 && !this.loot.has('长廊高台戒指')) {
-        this.loot.add('长廊高台戒指')
-        this.message = '回访长廊高台，取得藏在高处的戒指。'
-      } else if (this.near(prisonLocations.archiveX) && y < 4) {
-        this.message = this.collect('F01') ? '获得 F01 政务记录。时间轴已解锁，按 T 调查历史。' : '档案室的政务记录已经收起。'
-      } else if (this.near(prisonLocations.shortcutX) && y > 6.5) {
-        if (!this.flags.shortcutOpen) {
-          this.flags.shortcutOpen = true
-          this.message = '踢下铁梯！监狱二楼与中层走廊形成永久环路。'
-        } else {
-          this.travel('prison', prisonLocations.shortcutX, 2.5)
-          this.message = '沿捷径梯返回中层走廊。'
-        }
-      } else if (this.near(prisonLocations.shortcutX) && y < 4) {
-        if (this.flags.shortcutOpen) {
-          this.travel('prison', prisonLocations.shortcutX, 7)
-          this.message = '沿捷径梯到达监狱二楼。'
-        } else this.message = '铁梯的固定销在上方；你现在打不开。'
-      } else if (this.near(prisonLocations.noticeboardX) && y < 4) {
-        this.message = this.flags.spiritPerception
-          ? this.collect('F07') ? '隐藏字迹浮现。获得 F07：典狱长拒绝执行释放令。' : '公告板的隐字已经记录。'
-          : '普通公告板。似乎还有被覆盖的字迹，但现在无法辨认。'
-      } else if (this.near(ALTAR_X) && y < 4) {
-        const activated = activateCheckpoint(this.progression, x, ALTAR_X)
-        if (activated !== this.progression) {
-          this.progression = activated
-          this.combat = initialCombat()
-          this.enemy = initialEnemy(ENEMY_SPAWN_X)
-        }
-        this.confirmTimeline()
-        if (this.message === '祭坛记下了你的解释；没有新的地图变化。') {
-          this.message = '祭坛已点亮，生命恢复。按 T 选择证据，再按 E 提交解释。'
-        }
-      } else if (this.near(prisonLocations.exitX) && y < 4) {
-        if (!this.flags.exitKnowledge) {
-          this.message = '正门不是死锁：你尚不明白该走哪套公文程序。调查 F01、F03，回祭坛拼时间轴。'
-        } else {
-          this.flags.frontGateOpen = true
-          this.travel('city', 55)
-          this.message = '根据首相文书线索找到了通行滑槽，进入王城街道。皇宫前厅在右侧。'
-        }
-      } else if (this.near(prisonLocations.armoryStairX) && y < 4) {
-        this.travel('armory', 94)
-        this.message = '进入军械库外廊。大厅后楼梯仍可返回。'
-      } else if (this.near(prisonLocations.lockX) && y < 4) {
-        if (!this.flags.wardenKey) this.message = '责难官身后的门锁着。锁孔上刻着典狱长徽记。'
-        else {
-          this.flags.lockedDoorOpen = true
-          this.travel('detention', 116)
-          this.message = '典狱长钥匙串打开铁门：这里是拘押档案夹层。'
-        }
-      } else if (this.near(prisonLocations.upperGateX) && y < 4) {
-        this.message = '二楼平台就在头顶。需要从完整历史解释中获得二段跳。'
-      }
-    } else if (this.zone === 'city') {
-      if (this.near(prisonLocations.cityReturnX)) {
-        this.travel('prison', 10)
-        this.message = '返回监狱大厅。'
-      } else if (this.near(prisonLocations.palaceEvidenceX)) {
-        this.message = this.encounters.palaceGuard.health > 0
-          ? '封锁令在禁卫队长身上。先击败他。'
-          : this.collect('F10') ? '搜索禁卫队长尸体，获得 F10 城门封锁令。可回监狱祭坛拼政变线。'
-            : '队长的封锁令已经取走。'
-      }
-    } else if (this.zone === 'armory') {
-      if (this.near(prisonLocations.armoryReturnX)) {
-        this.travel('prison', 20)
-        this.message = '沿后楼梯返回监狱大厅。'
-      } else if (this.near(103)) {
-        if (this.flags.lockedDoorOpen) {
-          this.travel('detention', 112)
-          this.message = '从军械库外廊进入拘押档案夹层。'
-        } else this.message = '这条检修通道从刑讯室一侧锁着。'
-      }
-    } else {
-      if (this.near(prisonLocations.detentionX)) {
-        if (!this.flags.archiveRewardTaken) {
-          this.flags.archiveRewardTaken = true
-          this.loot.add('装备强化材料')
-          this.message = '调查拘押名册：放囚令与拒令记录互相矛盾。获得装备强化材料。'
-        } else this.message = '拘押名册已调查；这里的记录仍不能证明哪方说了真话。'
-      } else if (this.near(111)) {
-        this.travel('armory', 102)
-        this.message = '进入军械库外廊。'
-      } else if (this.near(118)) {
-        this.travel('prison', 41)
-        this.message = '回到责难官身后的铁门。'
-      }
-    }
-    this.syncWorldMeshes()
-    this.publishSnapshot()
+    handlePrisonInteraction(this.interactionContext(), {
+      travel: (zone, x, y) => this.travel(zone, x, y),
+      collect: id => this.collect(id),
+      addFlaskCapacity: () => { this.combat = addFlaskCapacity(this.combat) },
+      confirmTimeline: () => this.confirmTimeline(),
+      setMessage: message => { this.message = message },
+      syncWorld: () => this.syncWorldMeshes(),
+      publish: () => this.publishSnapshot(),
+    })
   }
+
 
   private stepEncounters(dt: number): void {
     for (const id of encounterIds) {
@@ -578,148 +797,160 @@ export class GameRuntime {
       if (encounter.health <= 0) continue
       const activeZone = id === 'palaceGuard' ? 'city' : 'prison'
       if (this.zone !== activeZone) continue
-      const step = stepEnemy(encounter.enemy, this.movement.x, this.movement.y, dt, encounter.floorY)
+      const profile = profileForEncounter(id, encounter.health)
+      const step = stepEnemy(encounter.enemy, this.movement.x, this.movement.y, dt, encounter.floorY, profile)
       encounter.enemy = { ...step.enemy, x: Math.max(encounter.minX, Math.min(encounter.maxX, step.enemy.x)) }
+      if (step.projectile) this.enemyProjectiles.spawn(id, step.projectile.name,
+        step.projectile.damage, step.projectile.speed,
+        encounter.enemy.x + encounter.enemy.facing * 0.65, encounter.floorY + 1,
+        encounter.enemy.facing, this.zone)
       if (step.playerDamage > 0) {
-        this.combat = damagePlayer(this.combat,
-          id === 'warden' ? 50 : id === 'inquisitor' || id === 'corruptedKnight' ? 35
-            : id === 'cellGuard' ? 15 : 25)
-        this.message = `${encounter.name}击中了你。`
+        const attackName = enemyAttackName(encounter.enemy, profile)
+        const outcome = this.receiveHit(step.playerDamage, encounter.enemy.x,
+          attackName ? `${encounter.name}的${attackName}` : encounter.name)
+        if ((outcome === 'hit' || outcome === 'guardBroken') && step.playerDisplacement) {
+          const surfaces = surfacesByZone[this.zone]
+          const minimum = Math.min(...surfaces.map(surface => surface.minX)) + 0.32
+          const maximum = Math.max(...surfaces.map(surface => surface.maxX)) - 0.32
+          this.movement = { ...this.movement,
+            x: Math.max(minimum, Math.min(maximum, this.movement.x + step.playerDisplacement)),
+            velocityX: 0 }
+        }
+        if (outcome === 'parried') {
+          encounter.enemy = applyEnemyHit(encounter.enemy, encounter.health, poiseRules.parry)
+          if (encounter.enemy.poise.exhaustedRemaining > 0) this.message = `弹反击溃${encounter.name}韧性！3 秒内可处决。`
+        }
       }
       if (this.combat.attack.phase !== 'active' || this.combat.attack.hitTarget) continue
-      const hit = { x: this.movement.x + this.facing * 0.95, y: this.movement.y + 0.35,
-        halfWidth: attackDefinition.reach / 2, height: attackDefinition.height }
+      const definition = attackDefinitions[this.combat.attack.kind]
+      const reach = this.currentWeaponReach * definition.reach / attackDefinitions.light.reach
+      const hit = { x: this.movement.x + this.facing * (0.35 + reach / 2), y: this.movement.y + 0.35,
+        halfWidth: reach / 2, height: definition.height }
       const target = { x: encounter.enemy.x, y: encounter.floorY, halfWidth: id === 'warden' ? 0.88 : 0.65,
         height: id === 'warden' ? 2.8 : 2.1 }
       if (!boxesOverlap(hit, target)) continue
-      const damage = this.flags.equipmentRecovered ? id === 'warden' ? 100 : 50 : 10
-      encounter.health = Math.max(0, encounter.health - damage)
+      const damage = this.combat.attack.kind === 'shieldBash' ? definition.damage
+        : (this.flags.equipmentRecovered ? id === 'warden' ? 100 : 50 : 25)
+          * definition.damage / attackDefinitions.light.damage * this.combat.attack.damageMultiplier
       this.combat.attack.hitTarget = true
-      encounter.enemy = applyEnemyHit(encounter.enemy, encounter.health)
-      this.message = `命中${encounter.name}。`
-      if (encounter.health === 0) {
-        this.progression = dropEnemySouls(this.progression, encounter.enemy.x, encounter.souls, encounter.floorY)
-        if (id === 'inquisitor') {
-          this.collect('F05')
-          this.loot.add('诘问之戒')
-          this.message = '责难官倒下。获得诘问之戒与 F05 首相手令；祭坛可拼 T0–T2。'
-        } else if (id === 'warden') {
-          this.collect('F12')
-          this.flags.wardenKey = true
-          this.loot.add('典狱长钥匙串')
-          this.loot.add('钥匙环戒指')
-          this.message = '典狱长倒下。获得钥匙串、钥匙环戒指与 F12；返回责难官身后的锁门。'
-        } else if (id === 'palaceGuard') {
-          this.syncFragmentMeshes()
-          this.message = '禁卫队长倒下。调查尸体上的封锁令以取得 F10。'
-        } else if (id === 'corruptedKnight') {
-          this.loot.add('长廊原素瓶碎片')
-          this.message = '腐化骑士倒下。获得原素瓶碎片与 300 魂。'
-        } else {
-          this.message = `${encounter.name}倒下。`
-        }
-      }
+      this.damageEncounter(id, damage,
+        attackPoiseDamage(this.combat.attack.kind, this.combat.attack.jumping),
+        this.combat.attack.kind !== 'shieldBash')
     }
+  }
+
+  private damageSoldier(damage: number, poiseDamage = 0): void {
+    const previousHealth = this.combat.enemy.health
+    this.combat = { ...this.combat, enemy: { ...this.combat.enemy,
+      health: Math.max(0, previousHealth - damage) } }
+    this.afterSoldierHit(previousHealth, poiseDamage)
+  }
+
+  private afterSoldierHit(previousHealth: number, poiseDamage = 0, executionEligible = false): void {
+    if (this.combat.enemy.health >= previousHealth) return
+    const executed = executionEligible && this.enemy.poise.executionAvailable
+    const wasExhausted = this.enemy.poise.exhaustedRemaining > 0
+    if (executed) this.enemy = { ...this.enemy, poise: consumeExecution(this.enemy.poise) }
+    this.enemy = applyEnemyHit(this.enemy, this.combat.enemy.health, poiseDamage)
+    this.message = this.combat.enemy.health === 0 ? '敌人倒下，魂已落在地面。'
+      : executed ? '处决命中灰烬士兵，造成双倍伤害！'
+        : !wasExhausted && this.enemy.poise.exhaustedRemaining > 0
+          ? '灰烬士兵韧性耗尽！3 秒内用 J/K 处决。' : '命中灰烬士兵。'
+    if (this.combat.enemy.health === 0) {
+      this.progression = dropEnemySouls(this.progression, this.enemy.x, enemyDefinition.souls, ENEMY_FLOOR_Y)
+    }
+  }
+
+  private damageEncounter(id: EncounterId, damage: number, poiseDamage = 0,
+    executionEligible = false): void {
+    const encounter = this.encounters[id]
+    if (encounter.health <= 0) return
+    const executed = executionEligible && encounter.enemy.poise.executionAvailable
+    const wasExhausted = encounter.enemy.poise.exhaustedRemaining > 0
+    const previousHealth = encounter.health
+    encounter.health = Math.max(0, encounter.health - damage
+      * (executed ? poiseRules.executionMultiplier : 1))
+    if (executed) encounter.enemy = { ...encounter.enemy,
+      poise: consumeExecution(encounter.enemy.poise) }
+    encounter.enemy = applyEnemyHit(encounter.enemy, encounter.health, poiseDamage)
+    if (id === 'warden' && previousHealth > 600 && encounter.health <= 600
+      && encounter.health > 0) {
+      encounter.enemy = { ...encounter.enemy,
+        poise: increaseMaxPoise(encounter.enemy.poise, 450) }
+    }
+    this.message = executed ? `处决命中${encounter.name}，造成双倍伤害！`
+      : !wasExhausted && encounter.enemy.poise.exhaustedRemaining > 0
+        ? `${encounter.name}韧性耗尽！3 秒内用 J/K 处决。` : `命中${encounter.name}。`
+    if (id === 'warden' && previousHealth > 600 && encounter.health <= 600
+      && encounter.health > 0) this.message = '典狱长起身，进入第二阶段！韧性上限提高到 450。'
+    if (encounter.health > 0) return
+    this.progression = dropEnemySouls(this.progression, encounter.enemy.x, encounter.souls, encounter.floorY)
+    if (id === 'inquisitor') {
+      this.collect('F05')
+      this.loot.add('诘问之戒')
+      this.message = '责难官倒下。获得诘问之戒与 F05 首相手令；祭坛可拼 T0–T2。'
+    } else if (id === 'warden') {
+      this.collect('F12')
+      this.flags.wardenKey = true
+      this.loot.add('典狱长钥匙串')
+      this.loot.add('钥匙环戒指')
+      this.message = '典狱长倒下。获得钥匙串、钥匙环戒指与 F12；返回责难官身后的锁门。'
+    } else if (id === 'palaceGuard') {
+      this.syncFragmentMeshes()
+      this.message = '禁卫队长倒下。调查尸体上的封锁令以取得 F10。'
+    } else if (id === 'corruptedKnight') {
+      this.loot.add('长廊原素瓶碎片')
+      this.combat = addFlaskCapacity(this.combat)
+      this.message = '腐化骑士倒下。获得原素瓶碎片（上限 +1）与 300 魂。'
+    } else this.message = `${encounter.name}倒下。`
   }
 
   private respawn(): void {
     const checkpointX = this.progression.checkpointActive ? this.progression.checkpointX : prisonLocations.spawnX
     this.travel('prison', checkpointX, floorAt(checkpointX) ?? 0)
-    this.combat = initialCombat()
+    this.combat = refillAtCheckpoint(this.combat)
+    this.magicGuardRemaining = 0
+    this.flurryFlashRemaining = 0
+    this.radiantRemaining = 0
+    this.sightRemaining = 0
     this.enemy = initialEnemy(ENEMY_SPAWN_X)
+    const initialRoster = initialEncounters()
     for (const id of encounterIds) {
       const encounter = this.encounters[id]
       if (encounter.health > 0) {
         encounter.health = encounter.maxHealth
-        encounter.enemy = initialEnemy(encounter.enemy.spawnX)
+        encounter.enemy = initialRoster[id].enemy
       }
     }
-    this.playerMesh.isVisible = true
+    this.visuals.setPlayerVisible(true)
     this.respawnRemaining = 0
     this.message = '你在检查点苏醒。失去的魂可回原地拾取。'
     this.publishSnapshot()
   }
 
   private syncSoulMeshes(): void {
-    const activeIds = new Set(this.progression.drops.map(drop => drop.id))
-    for (const [id, mesh] of this.soulMeshes) {
-      if (!activeIds.has(id)) {
-        mesh.dispose()
-        this.soulMeshes.delete(id)
-      }
-    }
-    for (const drop of this.progression.drops) {
-      if (this.soulMeshes.has(drop.id)) continue
-      const mesh = MeshBuilder.CreateSphere(`soul drop ${drop.id}`, { diameter: drop.kind === 'grave' ? 0.48 : 0.33 }, this.scene)
-      mesh.position.set(drop.x, (drop.y ?? floorAt(drop.x) ?? 2.5) + 0.55, -0.3)
-      mesh.material = this.soulMaterial
-      this.soulMeshes.set(drop.id, mesh)
-    }
+    this.visuals.syncSouls(this.progression)
   }
 
   private syncFragmentMeshes(): void {
-    for (const [id, mesh] of Object.entries(this.fragmentMeshes)) {
-      mesh.isVisible = id === 'F03' || id === 'F07'
-        ? id === 'F03' || this.flags.spiritPerception && !this.narrative.collectedFragmentIds.includes(id)
-        : id === 'F10'
-          ? this.encounters.palaceGuard.health === 0 && !this.narrative.collectedFragmentIds.includes(id)
-          : !this.narrative.collectedFragmentIds.includes(id)
-    }
+    this.visuals.syncFragments(this.flags, this.narrative, this.encounters)
   }
 
   private syncWorldMeshes(): void {
-    this.gateMeshes.gear.isVisible = !this.flags.equipmentRecovered
-    this.gateMeshes.lockedDoor.isVisible = !this.flags.lockedDoorOpen
-    this.gateMeshes.archiveReward.isVisible = !this.flags.archiveRewardTaken
-    this.gateMeshes.cellKnife.isVisible = !this.loot.has('备用短刀')
-    this.gateMeshes.flowerRing.isVisible = !this.loot.has('花木戒指')
-    this.gateMeshes.ventShard.isVisible = false
-    this.gateMeshes.ventWall.isVisible = !this.loot.has('通风管原素瓶碎片')
-    this.gateMeshes.ledgeRing.isVisible = !this.loot.has('长廊高台戒指')
-    for (const rung of this.gateMeshes.ladderRungs) rung.isVisible = this.flags.shortcutOpen
-    const cityMaterial = this.gateMeshes.cityGate.material as StandardMaterial
-    cityMaterial.emissiveColor = this.flags.exitKnowledge ? new Color3(0.34, 0.19, 0.06) : Color3.Black()
-    const ladderMaterial = this.gateMeshes.shortcut.material as StandardMaterial
-    ladderMaterial.emissiveColor = this.flags.shortcutOpen ? new Color3(0.1, 0.35, 0.32) : Color3.Black()
+    this.visuals.syncWorld(this.flags, this.loot)
+  }
+
+  private interactionContext(): InteractionContext {
+    return { zone: this.zone, x: this.movement.x, y: this.movement.y,
+      flags: this.flags, origin: this.origin, loot: this.loot,
+      acquiredWeapons: this.acquiredWeapons, encounters: this.encounters,
+      narrative: this.narrative }
   }
 
   private interactionPrompt(): string | null {
-    const y = this.movement.y
-    if (this.zone === 'prison') {
-      if (this.near(prisonLocations.equipmentX) && y < 2 && !this.flags.equipmentRecovered) return 'E · 取回被没收的职业装备'
-      if (this.near(-75) && y < 2 && !this.loot.has('备用短刀')) return 'E · 调查牢房 D'
-      if (this.near(-65) && y < 0 && !this.loot.has('花木戒指')) return 'E · 调查石桥下方'
-      if (this.near(-55.5) && y < 1 && !this.loot.has('通风管原素瓶碎片')) return 'E · 调查羽毛与假墙'
-      if (this.near(prisonLocations.shortcutX)) return y > 6.5
-        ? this.flags.shortcutOpen ? 'E · 沿捷径梯下降' : 'E · 从二楼放下铁梯'
-        : this.flags.shortcutOpen ? 'E · 沿捷径梯登上二楼' : '梯口在头顶，需从另一侧打开'
-      if (this.near(prisonLocations.archiveX) && y < 4 && !this.narrative.collectedFragmentIds.includes('F01')) return 'E · 调查档案室政务记录 F01'
-      if (this.near(-8) && y > 5.7 && !this.loot.has('长廊高台戒指')) return 'E · 取得高台戒指'
-      if (this.near(-8) && y < 4 && !this.flags.doubleJump) return '高台尚不可达：需要二段跳'
-      if (this.near(prisonLocations.noticeboardX) && y < 4) return this.flags.spiritPerception
-        ? 'E · 读取公告板隐藏字迹 F07' : '公告板似乎盖着旧字迹'
-      if (this.near(prisonLocations.exitX) && y < 4) return this.flags.exitKnowledge
-        ? 'E · 走首相公文通道，进入王城' : 'E · 调查王城出口的通行程序'
-      if (this.near(ALTAR_X) && y < 4) return 'T · 拼时间轴；E · 祭坛确认解释并存档'
-      if (this.near(prisonLocations.armoryStairX) && y < 4) return 'E · 前往军械库外廊'
-      if (this.near(prisonLocations.upperGateX) && y < 4) return this.flags.doubleJump
-        ? 'W／Space · 连按两次跳上监狱二楼' : '上方二楼需要二段跳'
-      if (this.near(prisonLocations.lockX) && y < 4) return this.flags.wardenKey
-        ? 'E · 用典狱长钥匙串打开铁门' : 'E · 调查责难官身后的锁门'
-    } else if (this.zone === 'city') {
-      if (this.near(prisonLocations.cityReturnX)) return 'E · 返回监狱大厅'
-      if (this.near(prisonLocations.palaceEvidenceX)) return this.encounters.palaceGuard.health > 0
-        ? '击败禁卫队长，取得封锁令' : 'E · 搜索尸体取得 F10'
-    } else if (this.zone === 'armory') {
-      if (this.near(prisonLocations.armoryReturnX)) return 'E · 返回监狱大厅后楼梯'
-      if (this.near(103)) return this.flags.lockedDoorOpen ? 'E · 进入拘押档案夹层' : '通道从刑讯室侧锁着'
-    } else {
-      if (this.near(111)) return 'E · 通往军械库外廊'
-      if (this.near(prisonLocations.detentionX) && !this.flags.archiveRewardTaken) return 'E · 调查拘押名册'
-      if (this.near(118)) return 'E · 回责难官房'
-    }
-    return null
+    return prisonInteractionPrompt(this.interactionContext())
   }
+
 
   private publishAtInterval(dt: number): void {
     this.snapshotClock += dt
@@ -730,51 +961,21 @@ export class GameRuntime {
   }
 
   private publishSnapshot(): void {
-    const currentRoom = roomAt(this.movement.x, this.movement.y, this.zone)
-    const encounter = currentRoom.id === 'InquisitorRoom' ? this.encounters.inquisitor
-      : currentRoom.id === 'SecondFloor'
-        ? [this.encounters.warden, this.encounters.upper1, this.encounters.upper2,
-          this.encounters.upper3, this.encounters.upper4]
-          .filter(item => item.health > 0).sort((a, b) => Math.abs(a.enemy.x - this.movement.x) - Math.abs(b.enemy.x - this.movement.x))[0]
-        : currentRoom.id === 'PalaceFoyer' ? this.encounters.palaceGuard
-          : currentRoom.id === 'KnightCorridor' ? this.encounters.corruptedKnight
-            : currentRoom.id === 'Cell' || currentRoom.id === 'PrisonCorridor' ? this.encounters.cellGuard : null
-    this.listener({
-      health: this.combat.player.health,
-      maxHealth: this.combat.player.maxHealth,
-      stamina: Math.round(this.combat.player.stamina),
-      maxStamina: this.combat.player.maxStamina,
-      enemyHealth: encounter?.health ?? this.combat.enemy.health,
-      enemyMaxHealth: encounter?.maxHealth ?? this.combat.enemy.maxHealth,
-      attackPhase: this.combat.attack.phase,
-      grounded: this.movement.grounded,
-      souls: this.progression.souls,
-      checkpointActive: this.progression.checkpointActive,
-      dead: this.respawnRemaining > 0,
-      message: this.message,
-      room: currentRoom.label,
-      discoveredRooms: this.discoveredRooms.size,
-      fragments: this.narrative.collectedFragmentIds.length,
-      timelineOpen: this.timelineOpen,
-      timelineUnlocked: this.narrative.collectedFragmentIds.includes('F01'),
-      timeline: buildTimelineView(this.narrative, demoTimeNodes, demoFragments),
-      equipmentRecovered: this.flags.equipmentRecovered,
-      exitKnowledge: this.flags.exitKnowledge,
-      spiritPerception: this.flags.spiritPerception && this.zone === 'prison',
-      doubleJump: this.flags.doubleJump,
-      shortcutOpen: this.flags.shortcutOpen,
-      wardenKey: this.flags.wardenKey,
-      lockedDoorOpen: this.flags.lockedDoorOpen,
+    this.listener(buildGameSnapshot({
+      combat: this.combat, movement: this.movement, enemy: this.enemy,
+      encounters: this.encounters, zone: this.zone, flags: this.flags,
+      narrative: this.narrative, progression: this.progression,
+      equipment: this.equipment, origin: this.origin,
+      acquiredWeapons: this.acquiredWeapons, acquiredOffhands: this.acquiredOffhands,
+      loot: this.loot, discoveredRooms: this.discoveredRooms,
+      message: this.message, timelineOpen: this.timelineOpen,
+      saveAvailable: this.saveAvailable, canSwitchEquipment: this.canSwitchEquipment(),
+      skillName: this.skillName, shieldReduction: this.shieldReduction,
+      prayerInput: this.prayerSequence?.join(' → ') ?? null,
+      radiantRemaining: this.radiantRemaining, sightRemaining: this.sightRemaining,
+      respawnRemaining: this.respawnRemaining,
       nearAltar: this.zone === 'prison' && this.near(ALTAR_X) && this.movement.y < 4,
-      enemyName: encounter?.name ?? '灰烬士兵',
-      totalRooms: 14,
-      origin: this.origin,
-      originLevel: originLoadouts[this.origin].level,
-      equipmentSummary: this.flags.equipmentRecovered
-        ? `${originLoadouts[this.origin].mainHand} / ${originLoadouts[this.origin].offHand} / 四部位防具 / ${originLoadouts[this.origin].other}`
-        : '囚服、牢门钥匙；职业装备被没收',
-      loot: [...this.loot],
       prompt: this.interactionPrompt(),
-    })
+    }))
   }
 }

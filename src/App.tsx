@@ -4,7 +4,9 @@ import { demoFragments, demoTimeNodes } from './narrative/demoData'
 import { initialNarrative } from './narrative/state'
 import { buildTimelineView } from './narrative/view'
 import { TimelinePanel } from './ui/TimelinePanel'
-import { originLoadouts, type OriginId } from './world/originLoadouts'
+import { WeaponCatalog } from './ui/WeaponCatalog'
+import { originAttributes, originLoadouts, type OriginId } from './world/originLoadouts'
+import { equipmentName, initialEquipment, type OffhandId, type WeaponId } from './world/equipment'
 import './style.css'
 
 const initialSnapshot: GameSnapshot = {
@@ -12,9 +14,24 @@ const initialSnapshot: GameSnapshot = {
   maxHealth: 350,
   stamina: 90,
   maxStamina: 90,
+  fp: 50,
+  maxFp: 50,
+  flasks: 3,
+  maxFlasks: 3,
   enemyHealth: 80,
   enemyMaxHealth: 80,
+  enemyPoise: 50,
+  enemyMaxPoise: 50,
+  enemyExhaustedRemaining: 0,
+  enemyExecutionAvailable: false,
+  enemyAttackName: null,
+  saveAvailable: false,
   attackPhase: 'idle',
+  defenseMode: 'idle',
+  shieldReduction: 0,
+  prayerInput: null,
+  radiantRemaining: 0,
+  sightRemaining: 0,
   grounded: true,
   souls: 0,
   checkpointActive: false,
@@ -27,6 +44,11 @@ const initialSnapshot: GameSnapshot = {
   timelineUnlocked: false,
   timeline: buildTimelineView(initialNarrative(demoTimeNodes), demoTimeNodes, demoFragments),
   equipmentRecovered: false,
+  canSwitchEquipment: false,
+  equipment: initialEquipment('knight'),
+  weaponOptions: ['straightSword'],
+  offhandOptions: [null, 'straightSword', 'kiteShield'],
+  skillName: '无',
   exitKnowledge: false,
   spiritPerception: false,
   doubleJump: false,
@@ -38,6 +60,8 @@ const initialSnapshot: GameSnapshot = {
   totalRooms: 14,
   origin: 'knight',
   originLevel: 9,
+  attributes: originAttributes.knight,
+  weaponDamage: 116,
   equipmentSummary: '囚服、牢门钥匙；职业装备被没收',
   loot: [],
   prompt: null,
@@ -96,20 +120,60 @@ export function App() {
             {Object.entries(originLoadouts).map(([id, loadout]) => <option key={id} value={id}>{loadout.name}</option>)}
           </select>
         </label>
+        <div className="equipment-controls">
+          <label>主手
+            <select value={snapshot.equipment.mainHand} disabled={!snapshot.canSwitchEquipment}
+              onChange={event => runtimeRef.current?.equipMainWeapon(event.target.value as WeaponId)}>
+              {snapshot.weaponOptions.map(id => <option key={id} value={id}>{equipmentName(id)}</option>)}
+            </select>
+          </label>
+          <label>副手
+            <select value={snapshot.equipment.offHand ?? ''} disabled={!snapshot.canSwitchEquipment}
+              onChange={event => runtimeRef.current?.equipOffhandItem((event.target.value || null) as OffhandId)}>
+              {snapshot.offhandOptions.map(id => <option key={id ?? 'empty'} value={id ?? ''}
+                disabled={id === snapshot.equipment.mainHand}>{equipmentName(id)}</option>)}
+            </select>
+          </label>
+          <button disabled={!snapshot.canSwitchEquipment} onClick={() => runtimeRef.current?.toggleWeaponGrip()}>
+            {snapshot.equipment.twoHanded ? '双手 · F 切单手' : '单手 · F 切双手'}
+          </button>
+          <span>L · {snapshot.equipmentRecovered ? snapshot.skillName : '装备被没收'}</span>
+        </div>
+        <div className="attribute-summary">
+          <span>力 {snapshot.attributes.strength}</span><span>敏 {snapshot.attributes.dexterity}</span>
+          <span>智 {snapshot.attributes.intelligence}</span><span>信 {snapshot.attributes.faith}</span>
+        </div>
+        <div className="damage-summary">当前武器预估伤害 · {snapshot.equipmentRecovered ? snapshot.weaponDamage : '装备未取回'}</div>
         <Meter label="生命" value={snapshot.health} maximum={snapshot.maxHealth} kind="health" />
         <Meter label="精力" value={snapshot.stamina} maximum={snapshot.maxStamina} kind="stamina" />
+        <Meter label="灵力 FP" value={snapshot.fp} maximum={snapshot.maxFp} kind="fp" />
+        <div className="hud-caption">原素瓶 · {snapshot.flasks} / {snapshot.maxFlasks}　<kbd>R</kbd> 回复 40% 生命</div>
+        <div className="hud-caption">战技 · {({ idle: '待机', parry: '弹反', guard: '格挡', dodge: '闪避步', stagger: '破盾' } as Record<string, string>)[snapshot.defenseMode]}　盾牌 · {snapshot.shieldReduction ? `${Math.round(snapshot.shieldReduction * 100)}% 减伤` : '未装备'}
+          {snapshot.prayerInput !== null && <><br />祷言输入 · {snapshot.prayerInput || '等待 WASD'}</>}
+          {snapshot.radiantRemaining > 0 && <><br />光辉武器 · {snapshot.radiantRemaining} 秒</>}
+          {snapshot.sightRemaining > 0 && <><br />神识 · {snapshot.sightRemaining} 秒</>}
+        </div>
         <div className="hud-caption">魂 · {snapshot.souls}　/　祭坛 · {snapshot.checkpointActive ? '已点亮' : '未点亮'}</div>
         <div className="room-caption">当前位置 · {snapshot.room}<br />已探索区域 · {snapshot.discoveredRooms} / {snapshot.totalRooms}</div>
         <div className="room-caption">历史证据 · 已收集 {snapshot.fragments}</div>
         <details className="loadout-details"><summary>携带装备</summary><p>{snapshot.equipmentSummary}</p></details>
         {snapshot.loot.length > 0 && <details className="loadout-details"><summary>探索收获 · {snapshot.loot.length}</summary><p>{snapshot.loot.join('、')}</p></details>}
+        <WeaponCatalog snapshot={snapshot} />
         <div className="room-caption">装备 · {snapshot.equipmentRecovered ? '已取回' : '被没收'}　王城 · {snapshot.exitKnowledge ? '已识别' : '待调查'}<br />感知 · {snapshot.spiritPerception ? '生效' : '无'}　二段跳 · {snapshot.doubleJump ? '已解锁' : '未解锁'}<br />捷径 · {snapshot.shortcutOpen ? '已开启' : '未开启'}　钥匙 · {snapshot.wardenKey ? '已获得' : '无'}</div>
       </section>
 
       {['牢房', '监狱走廊', '中层走廊', '腐化骑士长廊', '责难官房', '监狱二楼', '皇宫前厅占位'].includes(snapshot.room) && <section className="enemy-card" aria-label={`${snapshot.enemyName}状态`}>
         <span className="eyebrow">当前区域敌人 · {snapshot.enemyName}</span>
-        <strong>{snapshot.enemyHealth > 0 ? '观察他的起手动作' : '敌人已倒下'}</strong>
+        <strong>{snapshot.enemyHealth > 0
+          ? snapshot.enemyAttackName ? `起手 · ${snapshot.enemyAttackName}` : '观察他的起手动作'
+          : '敌人已倒下'}</strong>
         <Meter label="生命" value={snapshot.enemyHealth} maximum={snapshot.enemyMaxHealth} kind="enemy" />
+        {snapshot.enemyHealth > 0 && <><Meter label="韧性" value={snapshot.enemyPoise}
+          maximum={snapshot.enemyMaxPoise} kind="poise" />
+          {snapshot.enemyExhaustedRemaining > 0 && <div className="poise-exhausted">
+            力竭 · {snapshot.enemyExhaustedRemaining} 秒
+            {snapshot.enemyExecutionAvailable ? '内用 J/K 处决，伤害 ×2' : '后恢复'}
+          </div>}</>}
       </section>}
 
       {snapshot.prompt && <div className="interaction-hint">{snapshot.prompt}</div>}
@@ -124,8 +188,8 @@ export function App() {
       />}
 
       <footer className="bottom-bar">
-        <div className="controls"><span><kbd>A</kbd><kbd>D</kbd> 移动</span><span><kbd>W</kbd>/<kbd>SPACE</kbd> 跳跃</span><span><kbd>SHIFT</kbd> 疾跑</span><span><kbd>J</kbd> 攻击</span><span><kbd>E</kbd> 调查</span><span><kbd>T</kbd> 时间轴</span></div>
-        <div className="bottom-actions"><span className="runtime-status">{status}</span><button disabled={!snapshot.timelineUnlocked} title={snapshot.timelineUnlocked ? '打开时间轴' : '找到第一块历史证据后解锁'} onClick={() => runtimeRef.current?.toggleTimeline()}>时间轴</button><button onClick={() => runtimeRef.current?.reset()}>重置原型</button></div>
+        <div className="controls"><span><kbd>A</kbd><kbd>D</kbd> 移动</span><span><kbd>W</kbd>/<kbd>SPACE</kbd> 跳跃</span><span><kbd>SHIFT</kbd> 疾跑</span><span><kbd>J</kbd> 轻攻</span><span><kbd>K</kbd> 重攻</span><span><kbd>Q</kbd> 盾击</span><span><kbd>L</kbd> 战技</span><span><kbd>F</kbd> 握法</span><span><kbd>R</kbd> 原素瓶</span><span><kbd>E</kbd> 调查</span><span><kbd>T</kbd> 时间轴</span></div>
+        <div className="bottom-actions"><span className="runtime-status">{status}</span><button disabled={!snapshot.timelineUnlocked} title={snapshot.timelineUnlocked ? '打开时间轴' : '找到第一块历史证据后解锁'} onClick={() => runtimeRef.current?.toggleTimeline()}>时间轴</button><button disabled={!snapshot.saveAvailable} onClick={() => runtimeRef.current?.loadCheckpointSave()}>载入存档</button><button onClick={() => runtimeRef.current?.reset()}>新游戏（清除存档）</button></div>
       </footer>
     </main>
   )

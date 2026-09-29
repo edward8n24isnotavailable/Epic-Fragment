@@ -27,7 +27,7 @@ export function initialProgression(): ProgressionState {
 }
 
 export function activateCheckpoint(state: ProgressionState, playerX: number, altarX: number): ProgressionState {
-  if (Math.abs(playerX - altarX) > 1.2) return state
+  if (Math.abs(playerX - altarX) > 1.4) return state
   return { ...state, checkpointX: altarX, checkpointActive: true }
 }
 
