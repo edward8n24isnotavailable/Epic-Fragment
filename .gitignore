@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.vitest/
+*.local
+*.tsbuildinfo
+*-check.png
+.codex-edge-debug/
+.codex-browser-check.mjs
