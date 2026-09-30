@@ -37,6 +37,7 @@ switch ($Mode) {
         Invoke-GameEngine -EngineArguments @('--headless', '--editor', '--import', '--quit')
         Invoke-GameEngine -EngineArguments @('--headless', '--fixed-fps', '60', '--script', 'tests/migration_test.gd')
         Invoke-GameEngine -EngineArguments @('--headless', '--fixed-fps', '60', '--script', 'tests/art_validation_test.gd')
+        Invoke-GameEngine -EngineArguments @('--headless', '--fixed-fps', '60', '--script', 'tests/player_animation_test.gd')
     }
     'Export' {
         Invoke-GameEngine -EngineArguments @('--headless', '--editor', '--import', '--quit')

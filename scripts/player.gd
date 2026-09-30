@@ -61,6 +61,7 @@ func clear_transients() -> void:
 	skill_cooldown = 0
 	prayer_active = false
 	prayer_sequence = ""
+	$Sprite.reset_visual()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not prayer_active or not event is InputEventKey or not event.pressed or event.echo:
@@ -74,6 +75,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(dt: float) -> void:
 	if health <= 0:
 		velocity = Vector2.ZERO
+		$Sprite.update_from_player(self, dt)
+		queue_redraw()
 		return
 	var direction = Input.get_axis("move_left", "move_right")
 	var sprinting = absf(direction) > 0.1 and Input.is_action_pressed("sprint") and stamina > 0 and is_on_floor()
@@ -93,6 +96,7 @@ func _physics_process(dt: float) -> void:
 		flasks -= 1
 		health = minf(350, health + 140)
 		game.message = "原素瓶回复 40% 生命。"
+		$Sprite.trigger_action("drink", 0.4)
 	if Input.is_action_just_pressed("grip") and can_act() and game.state.flags.equipmentRecovered:
 		game.state.equipment.twoHanded = not game.state.equipment.twoHanded
 		magic_guard_remaining = 0
@@ -143,8 +147,7 @@ func _physics_process(dt: float) -> void:
 	if stamina_delay == 0:
 		stamina = minf(90, stamina + 45 * dt)
 	$Sprite.flip_h = facing < 0
-	$Sprite.rotation = -0.15 * facing if attack_phase == "active" else 0.0
-	$Sprite.modulate = Color(1.25, 1.05, 0.65) if radiant_remaining > 0 else Color(0.65, 0.85, 1.3) if defense in ["guard", "parry"] else Color.WHITE
+	$Sprite.update_from_player(self, dt)
 	queue_redraw()
 
 func can_act() -> bool:
@@ -175,9 +178,7 @@ func _step_attack(dt: float) -> void:
 		attack_time -= definition[attack_phase]
 		attack_phase = "active" if attack_phase == "startup" else "recovery" if attack_phase == "active" else "idle"
 	if attack_phase == "active":
-		var data = FragmentData.load_catalog()
-		var reach = float(data.weapons[game.state.equipment.mainHand].reach) if game.state.flags.equipmentRecovered else 1.0
-		reach *= definition.reach / 1.35
+		var reach = attack_reach()
 		var damage = float(definition.damage) * attack_multiplier
 		if attack_kind != "shieldBash":
 			damage *= game.state.power() * (1.2 if radiant_remaining > 0 else 1.0)
@@ -190,6 +191,14 @@ func _step_attack(dt: float) -> void:
 				hit_targets.append(enemy.id)
 				var poise = 15 if attack_kind == "heavy" and attack_airborne else definition.poise
 				enemy.take_hit(damage * (1 if enemy.id == "soldier" else 2), poise, attack_kind != "shieldBash")
+
+func attack_reach() -> float:
+	var weapon_reach = float(FragmentData.load_catalog().weapons[game.state.equipment.mainHand].reach) if game.state.flags.equipmentRecovered else 1.0
+	return weapon_reach * float(ATTACKS[attack_kind].reach) / 1.35
+
+func attack_visual_extent() -> float:
+	# Same horizontal extent as the enemy-origin hit test, including its body allowance.
+	return (attack_reach() + 0.8) * FragmentData.UNIT
 
 func _start_dodge(direction: int) -> void:
 	defense = "dodge"
@@ -246,6 +255,7 @@ func receive_hit(damage: float, attacker_x: float, attacker = null) -> String:
 	prayer_active = false
 	prayer_sequence = ""
 	health = maxf(0, health - damage)
+	$Sprite.trigger_hit()
 	return "hit"
 
 func activate_skill() -> void:
@@ -313,9 +323,30 @@ func finish_prayer() -> void:
 	prayer_sequence = ""
 
 func _draw() -> void:
-	if attack_phase == "active" or effect_remaining > 0:
-		var reach = 100.0 if attack_kind == "light" else 125.0
-		draw_arc(Vector2(facing * 35, -60), reach * 0.7, -1.3 if facing > 0 else 1.8,
-			1.3 if facing > 0 else 4.5, 12, Color(0.92, 0.78, 0.46, 0.8), 5)
+	if attack_phase == "active" or (attack_phase == "recovery" and attack_time < 0.09):
+		var extent = attack_visual_extent()
+		var progress = clampf(attack_time / float(ATTACKS[attack_kind].active), 0, 1) if attack_phase == "active" else 1.0
+		var fade = 1.0 if attack_phase == "active" else 1.0 - attack_time / 0.09
+		var ribbon = PackedVector2Array()
+		var outer = PackedVector2Array()
+		var height = 62.0 if attack_kind == "heavy" else 49.0
+		for i in range(33):
+			var angle = lerpf(-1.35, 1.35, i / 32.0)
+			var point = Vector2(facing * extent * cos(angle), -55 + height * sin(angle))
+			ribbon.append(point)
+			outer.append(point)
+		for i in range(32, -1, -1):
+			var angle = lerpf(-1.35, 1.35, i / 32.0)
+			ribbon.append(Vector2(facing * (extent - 24) * cos(angle), -55 + (height - 13) * sin(angle)))
+		draw_colored_polygon(ribbon, Color(1.0, 0.83, 0.46, 0.35 * fade))
+		draw_polyline(outer, Color(1.0, 0.94, 0.73, 0.9 * fade), 3, true)
+		var sweep_angle = lerpf(-1.15, 1.15, progress)
+		draw_line(Vector2(facing * 24, -55), Vector2(facing * extent * cos(sweep_angle), -55 + height * sin(sweep_angle)), Color(1, 0.93, 0.7, 0.8 * fade), 5, true)
+	if $Sprite.hit_remaining > 0:
+		var fade = $Sprite.hit_remaining / 0.2
+		for i in range(7):
+			var angle = i * TAU / 7.0
+			var direction = Vector2(cos(angle), sin(angle))
+			draw_line(Vector2(0, -60) + direction * (23 + (1-fade)*10), Vector2(0, -60) + direction * (35 + (1-fade)*20), Color(1, 0.45, 0.35, fade), 2, true)
 	if defense in ["guard", "parry"]:
 		draw_line(Vector2(facing * 36, -95), Vector2(facing * 36, -25), Color(0.5, 0.8, 1), 6)

@@ -16,3 +16,6 @@ legacy/web/node_modules/
 legacy/web/dist/
 legacy/web/build/
 legacy/web/release/
+ArtSources/Generated/player_character/*_full_bake.png
+ArtSources/Generated/player_character/*_reference.png
+ArtSources/Generated/player_character/*.blend1
