@@ -71,3 +71,7 @@ F01/T0 + F03/T1 在祭坛确认后开放王城公文通道。责难官掉落 F05
 原型不再是根目录运行入口。旧源码和数据转换工具保留于 `legacy/web/`，用于核对规则。
 
 Steam 接入步骤见 [STEAM.md](STEAM.md)，后续内容见 [ROADMAP.md](ROADMAP.md)。
+
+## 版权与许可
+
+Copyright © 2026 edward8n24isnotavailable. **All rights reserved（保留所有权利）。** 本项目原始代码、美术、剧情及文档的使用、修改、复制或分发，须取得版权持有者的书面授权；法律规定的权利除外。完整条款见 [LICENSE](LICENSE)。第三方软件及素材遵循各自许可，GitHub 平台条款授予的公开仓库查看与 Fork 权利不受影响。
