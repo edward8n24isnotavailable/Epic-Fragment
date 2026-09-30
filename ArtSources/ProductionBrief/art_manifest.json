@@ -1,0 +1,1152 @@
+{
+  "status": "proposed production specification; runtime still uses existing assets",
+  "world_pixels_per_unit": 64,
+  "author_pixels_per_unit": 128,
+  "runtime_sprite_scale": 0.5,
+  "padding_pixels": 64,
+  "rooms": [
+    {
+      "id": "Cell",
+      "label": "牢房",
+      "minX": -85,
+      "maxX": -79,
+      "floorY": 0,
+      "accent": "blue",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        768,
+        2880
+      ],
+      "delivery_size": [
+        896,
+        3008
+      ],
+      "baseline_core_px": 2176,
+      "baseline_delivery_px": 2240,
+      "godot_origin": [
+        -5472,
+        -1120.0
+      ],
+      "theme": "囚笼、潮湿石墙、睡铺、铁栏；左端封闭，右端连走廊",
+      "segments": [
+        {
+          "id": "Cell",
+          "minX": -85,
+          "maxX": -79,
+          "size": [
+            896,
+            3008
+          ],
+          "godot_origin": [
+            -5472,
+            -1120.0
+          ],
+          "reference_character": [
+            -82.0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PrisonCorridor",
+      "label": "监狱走廊",
+      "minX": -79,
+      "maxX": -73,
+      "floorY": 0,
+      "accent": "blue",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        768,
+        2880
+      ],
+      "delivery_size": [
+        896,
+        3008
+      ],
+      "baseline_core_px": 2176,
+      "baseline_delivery_px": 2240,
+      "godot_origin": [
+        -5088,
+        -1120.0
+      ],
+      "theme": "没收架、守卫岗位、牢房 D 短刀；左右连接牢房与下水道",
+      "segments": [
+        {
+          "id": "PrisonCorridor",
+          "minX": -79,
+          "maxX": -73,
+          "size": [
+            896,
+            3008
+          ],
+          "godot_origin": [
+            -5088,
+            -1120.0
+          ],
+          "reference_character": [
+            -76.0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Sewer",
+      "label": "下水道",
+      "minX": -73,
+      "maxX": -57,
+      "floorY": -1.5,
+      "accent": "blue",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        2048,
+        2880
+      ],
+      "delivery_size": [
+        2176,
+        3008
+      ],
+      "baseline_core_px": 2368,
+      "baseline_delivery_px": 2432,
+      "godot_origin": [
+        -4704,
+        -1120.0
+      ],
+      "theme": "低洼湿石、暗渠、水痕、石桥下戒指；现有地面连续，水主要是装饰",
+      "segments": [
+        {
+          "id": "Sewer",
+          "minX": -73,
+          "maxX": -57,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            -4704,
+            -1120.0
+          ],
+          "reference_character": [
+            -65.0,
+            -1.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Vent",
+      "label": "通风管／监狱上层通道",
+      "minX": -57,
+      "maxX": -41,
+      "floorY": -0.5,
+      "accent": "blue",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        2048,
+        2880
+      ],
+      "delivery_size": [
+        2176,
+        3008
+      ],
+      "baseline_core_px": 2240,
+      "baseline_delivery_px": 2304,
+      "godot_origin": [
+        -3680,
+        -1120.0
+      ],
+      "theme": "四段向右升高的 4 米平台、通风管、假墙和羽毛；保持真实跳台轮廓",
+      "segments": [
+        {
+          "id": "Vent",
+          "minX": -57,
+          "maxX": -41,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            -3680,
+            -1120.0
+          ],
+          "reference_character": [
+            -49.0,
+            1.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MiddleCorridor",
+      "label": "中层走廊",
+      "minX": -41,
+      "maxX": -21,
+      "floorY": 2.5,
+      "accent": "amber",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        2560,
+        2880
+      ],
+      "delivery_size": [
+        2688,
+        3008
+      ],
+      "baseline_core_px": 1856,
+      "baseline_delivery_px": 1920,
+      "godot_origin": [
+        -2656,
+        -1120.0
+      ],
+      "theme": "巡逻士兵长廊、支柱、破栏、通往二楼的捷径梯",
+      "segments": [
+        {
+          "id": "MiddleCorridor_01",
+          "minX": -41,
+          "maxX": -25,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            -2656,
+            -1120.0
+          ],
+          "reference_character": [
+            -33.0,
+            2.5
+          ]
+        },
+        {
+          "id": "MiddleCorridor_02",
+          "minX": -25,
+          "maxX": -21,
+          "size": [
+            640,
+            3008
+          ],
+          "godot_origin": [
+            -1632,
+            -1120.0
+          ],
+          "reference_character": [
+            -23.0,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Archive",
+      "label": "档案室岔路",
+      "minX": -21,
+      "maxX": -13,
+      "floorY": 2.5,
+      "accent": "amber",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        1024,
+        2880
+      ],
+      "delivery_size": [
+        1152,
+        3008
+      ],
+      "baseline_core_px": 1856,
+      "baseline_delivery_px": 1920,
+      "godot_origin": [
+        -1376,
+        -1120.0
+      ],
+      "theme": "档案柜、散落卷宗、F01；保留 x=-17 的调查空间",
+      "segments": [
+        {
+          "id": "Archive",
+          "minX": -21,
+          "maxX": -13,
+          "size": [
+            1152,
+            3008
+          ],
+          "godot_origin": [
+            -1376,
+            -1120.0
+          ],
+          "reference_character": [
+            -17.0,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KnightCorridor",
+      "label": "腐化骑士长廊",
+      "minX": -13,
+      "maxX": 3,
+      "floorY": 2.5,
+      "accent": "red",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        2048,
+        2880
+      ],
+      "delivery_size": [
+        2176,
+        3008
+      ],
+      "baseline_core_px": 1856,
+      "baseline_delivery_px": 1920,
+      "godot_origin": [
+        -864,
+        -1120.0
+      ],
+      "theme": "腐化骑士战场、盾痕、破旗、高台戒指；战斗区域保持清楚",
+      "segments": [
+        {
+          "id": "KnightCorridor",
+          "minX": -13,
+          "maxX": 3,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            -864,
+            -1120.0
+          ],
+          "reference_character": [
+            -5.0,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MainHall",
+      "label": "监狱大厅",
+      "minX": 3,
+      "maxX": 27,
+      "floorY": 2.5,
+      "accent": "amber",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        3072,
+        2880
+      ],
+      "delivery_size": [
+        3200,
+        3008
+      ],
+      "baseline_core_px": 1856,
+      "baseline_delivery_px": 1920,
+      "godot_origin": [
+        160,
+        -1120.0
+      ],
+      "theme": "祭坛、F03、F07 公告板、公文通道、后楼梯与二段跳高台；区分交互对象",
+      "segments": [
+        {
+          "id": "MainHall_01",
+          "minX": 3,
+          "maxX": 19,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            160,
+            -1120.0
+          ],
+          "reference_character": [
+            11.0,
+            2.5
+          ]
+        },
+        {
+          "id": "MainHall_02",
+          "minX": 19,
+          "maxX": 27,
+          "size": [
+            1152,
+            3008
+          ],
+          "godot_origin": [
+            1184,
+            -1120.0
+          ],
+          "reference_character": [
+            23.0,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "InquisitorRoom",
+      "label": "责难官房",
+      "minX": 27,
+      "maxX": 44,
+      "floorY": 2.5,
+      "accent": "red",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        2176,
+        2880
+      ],
+      "delivery_size": [
+        2304,
+        3008
+      ],
+      "baseline_core_px": 1856,
+      "baseline_delivery_px": 1920,
+      "godot_origin": [
+        1696,
+        -1120.0
+      ],
+      "theme": "责难官刑具、锁链、烙铁、拘押档案门；留出战斗空地",
+      "segments": [
+        {
+          "id": "InquisitorRoom_01",
+          "minX": 27,
+          "maxX": 43,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            1696,
+            -1120.0
+          ],
+          "reference_character": [
+            35.0,
+            2.5
+          ]
+        },
+        {
+          "id": "InquisitorRoom_02",
+          "minX": 43,
+          "maxX": 44,
+          "size": [
+            256,
+            3008
+          ],
+          "godot_origin": [
+            2720,
+            -1120.0
+          ],
+          "reference_character": [
+            43.5,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SecondFloor",
+      "label": "监狱二楼",
+      "minX": -42,
+      "maxX": 18,
+      "floorY": 7,
+      "accent": "red",
+      "zone": "prison",
+      "top_y": 17.0,
+      "bottom_y": -5.5,
+      "core_size": [
+        7680,
+        2880
+      ],
+      "delivery_size": [
+        7808,
+        3008
+      ],
+      "baseline_core_px": 1280,
+      "baseline_delivery_px": 1344,
+      "godot_origin": [
+        -2720,
+        -1120.0
+      ],
+      "theme": "长巡逻廊桥、四狱卒、左端典狱长战场；与下层共享同一空间",
+      "segments": [
+        {
+          "id": "SecondFloor_01",
+          "minX": -42,
+          "maxX": -26,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            -2720,
+            -1120.0
+          ],
+          "reference_character": [
+            -34.0,
+            7
+          ]
+        },
+        {
+          "id": "SecondFloor_02",
+          "minX": -26,
+          "maxX": -10,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            -1696,
+            -1120.0
+          ],
+          "reference_character": [
+            -18.0,
+            7
+          ]
+        },
+        {
+          "id": "SecondFloor_03",
+          "minX": -10,
+          "maxX": 6,
+          "size": [
+            2176,
+            3008
+          ],
+          "godot_origin": [
+            -672,
+            -1120.0
+          ],
+          "reference_character": [
+            -2.0,
+            7
+          ]
+        },
+        {
+          "id": "SecondFloor_04",
+          "minX": 6,
+          "maxX": 18,
+          "size": [
+            1664,
+            3008
+          ],
+          "godot_origin": [
+            352,
+            -1120.0
+          ],
+          "reference_character": [
+            12.0,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CityStreet",
+      "label": "王城街道入口",
+      "minX": 50,
+      "maxX": 63,
+      "floorY": 2.5,
+      "accent": "amber",
+      "zone": "city",
+      "top_y": 12.5,
+      "bottom_y": -1.5,
+      "core_size": [
+        1664,
+        1792
+      ],
+      "delivery_size": [
+        1792,
+        1920
+      ],
+      "baseline_core_px": 1280,
+      "baseline_delivery_px": 1344,
+      "godot_origin": [
+        3168,
+        -832.0
+      ],
+      "theme": "城门、封锁栅栏、冷色街道、返回监狱入口；先做当前入口范围",
+      "segments": [
+        {
+          "id": "CityStreet",
+          "minX": 50,
+          "maxX": 63,
+          "size": [
+            1792,
+            1920
+          ],
+          "godot_origin": [
+            3168,
+            -832.0
+          ],
+          "reference_character": [
+            56.5,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PalaceFoyer",
+      "label": "皇宫前厅占位",
+      "minX": 63,
+      "maxX": 80,
+      "floorY": 2.5,
+      "accent": "red",
+      "zone": "city",
+      "top_y": 12.5,
+      "bottom_y": -1.5,
+      "core_size": [
+        2176,
+        1792
+      ],
+      "delivery_size": [
+        2304,
+        1920
+      ],
+      "baseline_core_px": 1280,
+      "baseline_delivery_px": 1344,
+      "godot_origin": [
+        4000,
+        -832.0
+      ],
+      "theme": "禁卫队长战场、宫廷柱廊、尸体与 F10 文书；现有占位范围",
+      "segments": [
+        {
+          "id": "PalaceFoyer_01",
+          "minX": 63,
+          "maxX": 79,
+          "size": [
+            2176,
+            1920
+          ],
+          "godot_origin": [
+            4000,
+            -832.0
+          ],
+          "reference_character": [
+            71.0,
+            2.5
+          ]
+        },
+        {
+          "id": "PalaceFoyer_02",
+          "minX": 79,
+          "maxX": 80,
+          "size": [
+            256,
+            1920
+          ],
+          "godot_origin": [
+            5024,
+            -832.0
+          ],
+          "reference_character": [
+            79.5,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Armory",
+      "label": "军械库外廊",
+      "minX": 90,
+      "maxX": 105,
+      "floorY": 2.5,
+      "accent": "blue",
+      "zone": "armory",
+      "top_y": 12.5,
+      "bottom_y": -1.5,
+      "core_size": [
+        1920,
+        1792
+      ],
+      "delivery_size": [
+        2048,
+        1920
+      ],
+      "baseline_core_px": 1280,
+      "baseline_delivery_px": 1344,
+      "godot_origin": [
+        5728,
+        -832.0
+      ],
+      "theme": "兵器架、木箱、甲胄、通往大厅与档案夹层的通道",
+      "segments": [
+        {
+          "id": "Armory",
+          "minX": 90,
+          "maxX": 105,
+          "size": [
+            2048,
+            1920
+          ],
+          "godot_origin": [
+            5728,
+            -832.0
+          ],
+          "reference_character": [
+            97.5,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DetentionArchive",
+      "label": "拘押档案夹层",
+      "minX": 110,
+      "maxX": 119,
+      "floorY": 2.5,
+      "accent": "amber",
+      "zone": "detention",
+      "top_y": 12.5,
+      "bottom_y": -1.5,
+      "core_size": [
+        1152,
+        1792
+      ],
+      "delivery_size": [
+        1280,
+        1920
+      ],
+      "baseline_core_px": 1280,
+      "baseline_delivery_px": 1344,
+      "godot_origin": [
+        7008,
+        -832.0
+      ],
+      "theme": "拘押名册、档案架、夹层通道与责难官房锁门回路",
+      "segments": [
+        {
+          "id": "DetentionArchive",
+          "minX": 110,
+          "maxX": 119,
+          "size": [
+            1280,
+            1920
+          ],
+          "godot_origin": [
+            7008,
+            -832.0
+          ],
+          "reference_character": [
+            114.5,
+            2.5
+          ]
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "equipment",
+      "zone": "prison",
+      "x": -77.5,
+      "y": 0.0,
+      "label": "没收架",
+      "asset": "confiscation_rack"
+    },
+    {
+      "id": "dagger",
+      "zone": "prison",
+      "x": -75.0,
+      "y": 0.0,
+      "label": "牢房 D",
+      "asset": "cell_d_dagger"
+    },
+    {
+      "id": "ring",
+      "zone": "prison",
+      "x": -65.0,
+      "y": -1.5,
+      "label": "石桥下方",
+      "asset": ""
+    },
+    {
+      "id": "flask",
+      "zone": "prison",
+      "x": -55.5,
+      "y": -0.5,
+      "label": "羽毛与假墙",
+      "asset": ""
+    },
+    {
+      "id": "F01",
+      "zone": "prison",
+      "x": -17.0,
+      "y": 2.5,
+      "label": "政务记录 F01",
+      "asset": "archive_cabinet_f01"
+    },
+    {
+      "id": "highRing",
+      "zone": "prison",
+      "x": -8.0,
+      "y": 6.2,
+      "label": "高台戒指",
+      "asset": ""
+    },
+    {
+      "id": "shortcutTop",
+      "zone": "prison",
+      "x": -30.0,
+      "y": 7.0,
+      "label": "捷径梯",
+      "asset": "ladder"
+    },
+    {
+      "id": "shortcutBottom",
+      "zone": "prison",
+      "x": -30.0,
+      "y": 2.5,
+      "label": "捷径梯",
+      "asset": ""
+    },
+    {
+      "id": "F07",
+      "zone": "prison",
+      "x": 5.5,
+      "y": 2.5,
+      "label": "公告板 F07",
+      "asset": "f07_notice_board"
+    },
+    {
+      "id": "exit",
+      "zone": "prison",
+      "x": 9.0,
+      "y": 2.5,
+      "label": "王城公文通道",
+      "asset": "locked_door"
+    },
+    {
+      "id": "altar",
+      "zone": "prison",
+      "x": 16.0,
+      "y": 2.5,
+      "label": "祭坛 · 时间轴与存档",
+      "asset": "altar"
+    },
+    {
+      "id": "armory",
+      "zone": "prison",
+      "x": 21.5,
+      "y": 2.5,
+      "label": "后楼梯",
+      "asset": "ladder"
+    },
+    {
+      "id": "upper",
+      "zone": "prison",
+      "x": 23.7,
+      "y": 2.5,
+      "label": "二楼高台",
+      "asset": ""
+    },
+    {
+      "id": "lock",
+      "zone": "prison",
+      "x": 42.5,
+      "y": 2.5,
+      "label": "拘押档案夹层锁门",
+      "asset": "locked_door"
+    },
+    {
+      "id": "cityReturn",
+      "zone": "city",
+      "x": 52.0,
+      "y": 2.5,
+      "label": "返回监狱",
+      "asset": "locked_door"
+    },
+    {
+      "id": "F10",
+      "zone": "city",
+      "x": 75.0,
+      "y": 2.5,
+      "label": "封锁令 F10",
+      "asset": "archive_cabinet_f01"
+    },
+    {
+      "id": "armoryReturn",
+      "zone": "armory",
+      "x": 92.0,
+      "y": 2.5,
+      "label": "返回大厅",
+      "asset": "ladder"
+    },
+    {
+      "id": "detentionEntry",
+      "zone": "armory",
+      "x": 103.0,
+      "y": 2.5,
+      "label": "检修通道",
+      "asset": "locked_door"
+    },
+    {
+      "id": "detentionReturn",
+      "zone": "detention",
+      "x": 111.0,
+      "y": 2.5,
+      "label": "军械库通道",
+      "asset": "locked_door"
+    },
+    {
+      "id": "detentionRecord",
+      "zone": "detention",
+      "x": 114.0,
+      "y": 2.5,
+      "label": "拘押名册",
+      "asset": "archive_cabinet_f01"
+    },
+    {
+      "id": "lockReturn",
+      "zone": "detention",
+      "x": 118.0,
+      "y": 2.5,
+      "label": "责难官房",
+      "asset": "locked_door"
+    }
+  ],
+  "encounters": [
+    {
+      "id": "cellGuard",
+      "name": "牢房疯兵",
+      "x": -78.7,
+      "y": 0
+    },
+    {
+      "id": "corruptedKnight",
+      "name": "腐化骑士",
+      "x": -5,
+      "y": 2.5
+    },
+    {
+      "id": "upper1",
+      "name": "二楼狱卒",
+      "x": 10,
+      "y": 7
+    },
+    {
+      "id": "upper2",
+      "name": "二楼狱卒",
+      "x": -2,
+      "y": 7
+    },
+    {
+      "id": "upper3",
+      "name": "二楼狱卒",
+      "x": -15,
+      "y": 7
+    },
+    {
+      "id": "upper4",
+      "name": "二楼狱卒",
+      "x": -27,
+      "y": 7
+    },
+    {
+      "id": "inquisitor",
+      "name": "责难官",
+      "x": 36,
+      "y": 2.5
+    },
+    {
+      "id": "warden",
+      "name": "典狱长",
+      "x": -38,
+      "y": 7
+    },
+    {
+      "id": "palaceGuard",
+      "name": "禁卫队长",
+      "x": 72,
+      "y": 2.5
+    },
+    {
+      "id": "soldier",
+      "name": "灰烬士兵",
+      "x": -31,
+      "y": 2.5
+    }
+  ],
+  "surfaces": {
+    "prison": [
+      {
+        "id": "cell",
+        "minX": -85,
+        "maxX": -73,
+        "y": 0
+      },
+      {
+        "id": "sewer",
+        "minX": -73,
+        "maxX": -57,
+        "y": -1.5
+      },
+      {
+        "id": "vent-step-1",
+        "minX": -57,
+        "maxX": -53,
+        "y": -0.5
+      },
+      {
+        "id": "vent-step-2",
+        "minX": -53,
+        "maxX": -49,
+        "y": 0.5
+      },
+      {
+        "id": "vent-step-3",
+        "minX": -49,
+        "maxX": -45,
+        "y": 1.5
+      },
+      {
+        "id": "vent-step-4",
+        "minX": -45,
+        "maxX": -41,
+        "y": 2.5
+      },
+      {
+        "id": "middle-corridor",
+        "minX": -41,
+        "maxX": -21,
+        "y": 2.5
+      },
+      {
+        "id": "archive",
+        "minX": -21,
+        "maxX": -13,
+        "y": 2.5
+      },
+      {
+        "id": "knight-corridor",
+        "minX": -13,
+        "maxX": 3,
+        "y": 2.5
+      },
+      {
+        "id": "knight-high-ledge",
+        "minX": -9.5,
+        "maxX": -6.5,
+        "y": 6.2,
+        "oneWay": true
+      },
+      {
+        "id": "hall",
+        "minX": 3,
+        "maxX": 27,
+        "y": 2.5
+      },
+      {
+        "id": "inquisitor",
+        "minX": 27,
+        "maxX": 44,
+        "y": 2.5
+      },
+      {
+        "id": "hall-upper-ledge",
+        "minX": 18,
+        "maxX": 26,
+        "y": 6.1,
+        "oneWay": true
+      },
+      {
+        "id": "second-floor",
+        "minX": -42,
+        "maxX": 18,
+        "y": 7,
+        "oneWay": true
+      }
+    ],
+    "city": [
+      {
+        "id": "city-street",
+        "minX": 50,
+        "maxX": 63,
+        "y": 2.5
+      },
+      {
+        "id": "palace-foyer",
+        "minX": 63,
+        "maxX": 80,
+        "y": 2.5
+      }
+    ],
+    "armory": [
+      {
+        "id": "armory",
+        "minX": 90,
+        "maxX": 105,
+        "y": 2.5
+      }
+    ],
+    "detention": [
+      {
+        "id": "detention",
+        "minX": 110,
+        "maxX": 119,
+        "y": 2.5
+      }
+    ]
+  },
+  "weapons": [
+    "veteranGreatsword",
+    "exileGreatsword",
+    "ashGreatsword",
+    "cathedralKnightGreatsword",
+    "blackKnightGreatsword",
+    "lorianGreatsword",
+    "vanhaltGreatsword",
+    "straightSword",
+    "standardGreatsword",
+    "balmuk",
+    "crimson",
+    "irithyllSword",
+    "scorchedEarth",
+    "astoraSword",
+    "thiefDagger",
+    "assassinsBlade",
+    "shadowDagger",
+    "needleSword",
+    "occultDagger",
+    "rapier",
+    "dagger",
+    "apprenticeStaff",
+    "sageStaff",
+    "courtMageStaff",
+    "crystalStaff",
+    "mace",
+    "club"
+  ],
+  "offhands": [
+    "leatherShield",
+    "kiteShield",
+    "knightShield",
+    "dragonShield",
+    "towerShield",
+    "woodenShield",
+    "travelerScripture",
+    "priestScripture",
+    "saintScripture",
+    "whiteScripture"
+  ]
+}

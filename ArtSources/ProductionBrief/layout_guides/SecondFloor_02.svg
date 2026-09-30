@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2176" height="3008" viewBox="0 0 2176 3008">
+<rect width="100%" height="100%" fill="#18232d"/>
+<rect x="64" y="64" width="2048" height="2880" fill="none" stroke="#ffffff" stroke-width="2"/>
+<line x1="64" y1="64" x2="64" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="192" y1="64" x2="192" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="320" y1="64" x2="320" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="448" y1="64" x2="448" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="576" y1="64" x2="576" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="704" y1="64" x2="704" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="832" y1="64" x2="832" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="960" y1="64" x2="960" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="1088" y1="64" x2="1088" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="1216" y1="64" x2="1216" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="1344" y1="64" x2="1344" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="1472" y1="64" x2="1472" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="1600" y1="64" x2="1600" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="1728" y1="64" x2="1728" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="1856" y1="64" x2="1856" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="1984" y1="64" x2="1984" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="2112" y1="64" x2="2112" y2="2944" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="2880.0" x2="2112" y2="2880.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="2752.0" x2="2112" y2="2752.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="2624.0" x2="2112" y2="2624.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="2496.0" x2="2112" y2="2496.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="2368.0" x2="2112" y2="2368.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="2240.0" x2="2112" y2="2240.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="2112.0" x2="2112" y2="2112.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1984.0" x2="2112" y2="1984.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1856.0" x2="2112" y2="1856.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1728.0" x2="2112" y2="1728.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1600.0" x2="2112" y2="1600.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1472.0" x2="2112" y2="1472.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1344.0" x2="2112" y2="1344.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1216.0" x2="2112" y2="1216.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1088.0" x2="2112" y2="1088.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="960.0" x2="2112" y2="960.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="832.0" x2="2112" y2="832.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="704.0" x2="2112" y2="704.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="576.0" x2="2112" y2="576.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="448.0" x2="2112" y2="448.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="320.0" x2="2112" y2="320.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="192.0" x2="2112" y2="192.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="64.0" x2="2112" y2="64.0" stroke="#334553" stroke-width="1"/>
+<line x1="0.0" y1="1920.0" x2="704" y2="1920.0" stroke="#56e39f" stroke-width="6"/>
+<text x="6.0" y="1908.0" fill="#56e39f" font-size="18">middle-corridor</text>
+<line x1="704" y1="1920.0" x2="1728" y2="1920.0" stroke="#56e39f" stroke-width="6"/>
+<text x="710" y="1908.0" fill="#56e39f" font-size="18">archive</text>
+<line x1="1728" y1="1920.0" x2="2176.0" y2="1920.0" stroke="#56e39f" stroke-width="6"/>
+<text x="1734" y="1908.0" fill="#56e39f" font-size="18">knight-corridor</text>
+<line x1="0.0" y1="1344.0" x2="2176.0" y2="1344.0" stroke="#ffc857" stroke-width="6"/>
+<text x="6.0" y="1332.0" fill="#ffc857" font-size="18">second-floor</text>
+<circle cx="1216.0" cy="1920.0" r="10" fill="#69c9ff"/>
+<text x="1230.0" y="1906.0" fill="#69c9ff" font-size="20">F01</text>
+<rect x="1048.0" y="1128.0" width="80" height="216" fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-width="3"/>
+<text x="76" y="40" fill="#ffffff" font-size="24">SecondFloor_02 | 128 px/unit | green=solid, gold=one-way, blue=interaction</text></svg>

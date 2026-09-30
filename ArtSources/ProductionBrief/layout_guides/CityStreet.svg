@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1792" height="1920" viewBox="0 0 1792 1920">
+<rect width="100%" height="100%" fill="#18232d"/>
+<rect x="64" y="64" width="1664" height="1792" fill="none" stroke="#ffffff" stroke-width="2"/>
+<line x1="64" y1="64" x2="64" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="192" y1="64" x2="192" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="320" y1="64" x2="320" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="448" y1="64" x2="448" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="576" y1="64" x2="576" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="704" y1="64" x2="704" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="832" y1="64" x2="832" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="960" y1="64" x2="960" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="1088" y1="64" x2="1088" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="1216" y1="64" x2="1216" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="1344" y1="64" x2="1344" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="1472" y1="64" x2="1472" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="1600" y1="64" x2="1600" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="1728" y1="64" x2="1728" y2="1856" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1792.0" x2="1728" y2="1792.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1664.0" x2="1728" y2="1664.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1536.0" x2="1728" y2="1536.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1408.0" x2="1728" y2="1408.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1280.0" x2="1728" y2="1280.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1152.0" x2="1728" y2="1152.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1024.0" x2="1728" y2="1024.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="896.0" x2="1728" y2="896.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="768.0" x2="1728" y2="768.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="640.0" x2="1728" y2="640.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="512.0" x2="1728" y2="512.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="384.0" x2="1728" y2="384.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="256.0" x2="1728" y2="256.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="128.0" x2="1728" y2="128.0" stroke="#334553" stroke-width="1"/>
+<line x1="64" y1="1344.0" x2="1728" y2="1344.0" stroke="#56e39f" stroke-width="6"/>
+<text x="70" y="1332.0" fill="#56e39f" font-size="18">city-street</text>
+<line x1="1728" y1="1344.0" x2="1792.0" y2="1344.0" stroke="#56e39f" stroke-width="6"/>
+<text x="1734" y="1332.0" fill="#56e39f" font-size="18">palace-foyer</text>
+<circle cx="320.0" cy="1344.0" r="10" fill="#69c9ff"/>
+<text x="334.0" y="1330.0" fill="#69c9ff" font-size="20">cityReturn</text>
+<rect x="856.0" y="1128.0" width="80" height="216" fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-width="3"/>
+<text x="76" y="40" fill="#ffffff" font-size="24">CityStreet | 128 px/unit | green=solid, gold=one-way, blue=interaction</text></svg>

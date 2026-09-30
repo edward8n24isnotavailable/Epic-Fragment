@@ -4,7 +4,15 @@ dist/
 *.local
 *.tsbuildinfo
 *-check.png
+*-check.png.import
 .codex-edge-debug/
 .codex-browser-check.mjs
 build/
 release/
+.godot/
+.migration/
+export_credentials.cfg
+legacy/web/node_modules/
+legacy/web/dist/
+legacy/web/build/
+legacy/web/release/

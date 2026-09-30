@@ -1,0 +1,2035 @@
+{
+  "rooms": [
+    {
+      "id": "Cell",
+      "label": "牢房",
+      "minX": -85,
+      "maxX": -79,
+      "floorY": 0,
+      "accent": "blue"
+    },
+    {
+      "id": "PrisonCorridor",
+      "label": "监狱走廊",
+      "minX": -79,
+      "maxX": -73,
+      "floorY": 0,
+      "accent": "blue"
+    },
+    {
+      "id": "Sewer",
+      "label": "下水道",
+      "minX": -73,
+      "maxX": -57,
+      "floorY": -1.5,
+      "accent": "blue"
+    },
+    {
+      "id": "Vent",
+      "label": "通风管／监狱上层通道",
+      "minX": -57,
+      "maxX": -41,
+      "floorY": -0.5,
+      "accent": "blue"
+    },
+    {
+      "id": "MiddleCorridor",
+      "label": "中层走廊",
+      "minX": -41,
+      "maxX": -21,
+      "floorY": 2.5,
+      "accent": "amber"
+    },
+    {
+      "id": "Archive",
+      "label": "档案室岔路",
+      "minX": -21,
+      "maxX": -13,
+      "floorY": 2.5,
+      "accent": "amber"
+    },
+    {
+      "id": "KnightCorridor",
+      "label": "腐化骑士长廊",
+      "minX": -13,
+      "maxX": 3,
+      "floorY": 2.5,
+      "accent": "red"
+    },
+    {
+      "id": "MainHall",
+      "label": "监狱大厅",
+      "minX": 3,
+      "maxX": 27,
+      "floorY": 2.5,
+      "accent": "amber"
+    },
+    {
+      "id": "InquisitorRoom",
+      "label": "责难官房",
+      "minX": 27,
+      "maxX": 44,
+      "floorY": 2.5,
+      "accent": "red"
+    },
+    {
+      "id": "SecondFloor",
+      "label": "监狱二楼",
+      "minX": -42,
+      "maxX": 18,
+      "floorY": 7,
+      "accent": "red"
+    },
+    {
+      "id": "CityStreet",
+      "label": "王城街道入口",
+      "minX": 50,
+      "maxX": 63,
+      "floorY": 2.5,
+      "accent": "amber"
+    },
+    {
+      "id": "PalaceFoyer",
+      "label": "皇宫前厅占位",
+      "minX": 63,
+      "maxX": 80,
+      "floorY": 2.5,
+      "accent": "red"
+    },
+    {
+      "id": "Armory",
+      "label": "军械库外廊",
+      "minX": 90,
+      "maxX": 105,
+      "floorY": 2.5,
+      "accent": "blue"
+    },
+    {
+      "id": "DetentionArchive",
+      "label": "拘押档案夹层",
+      "minX": 110,
+      "maxX": 119,
+      "floorY": 2.5,
+      "accent": "amber"
+    }
+  ],
+  "surfaces": {
+    "prison": [
+      {
+        "id": "cell",
+        "minX": -85,
+        "maxX": -73,
+        "y": 0
+      },
+      {
+        "id": "sewer",
+        "minX": -73,
+        "maxX": -57,
+        "y": -1.5
+      },
+      {
+        "id": "vent-step-1",
+        "minX": -57,
+        "maxX": -53,
+        "y": -0.5
+      },
+      {
+        "id": "vent-step-2",
+        "minX": -53,
+        "maxX": -49,
+        "y": 0.5
+      },
+      {
+        "id": "vent-step-3",
+        "minX": -49,
+        "maxX": -45,
+        "y": 1.5
+      },
+      {
+        "id": "vent-step-4",
+        "minX": -45,
+        "maxX": -41,
+        "y": 2.5
+      },
+      {
+        "id": "middle-corridor",
+        "minX": -41,
+        "maxX": -21,
+        "y": 2.5
+      },
+      {
+        "id": "archive",
+        "minX": -21,
+        "maxX": -13,
+        "y": 2.5
+      },
+      {
+        "id": "knight-corridor",
+        "minX": -13,
+        "maxX": 3,
+        "y": 2.5
+      },
+      {
+        "id": "knight-high-ledge",
+        "minX": -9.5,
+        "maxX": -6.5,
+        "y": 6.2,
+        "oneWay": true
+      },
+      {
+        "id": "hall",
+        "minX": 3,
+        "maxX": 27,
+        "y": 2.5
+      },
+      {
+        "id": "inquisitor",
+        "minX": 27,
+        "maxX": 44,
+        "y": 2.5
+      },
+      {
+        "id": "hall-upper-ledge",
+        "minX": 18,
+        "maxX": 26,
+        "y": 6.1,
+        "oneWay": true
+      },
+      {
+        "id": "second-floor",
+        "minX": -42,
+        "maxX": 18,
+        "y": 7,
+        "oneWay": true
+      }
+    ],
+    "city": [
+      {
+        "id": "city-street",
+        "minX": 50,
+        "maxX": 63,
+        "y": 2.5
+      },
+      {
+        "id": "palace-foyer",
+        "minX": 63,
+        "maxX": 80,
+        "y": 2.5
+      }
+    ],
+    "armory": [
+      {
+        "id": "armory",
+        "minX": 90,
+        "maxX": 105,
+        "y": 2.5
+      }
+    ],
+    "detention": [
+      {
+        "id": "detention",
+        "minX": 110,
+        "maxX": 119,
+        "y": 2.5
+      }
+    ]
+  },
+  "locations": {
+    "spawnX": -81,
+    "archiveX": -17,
+    "soldierX": -31,
+    "altarX": 16,
+    "inquisitorX": 36,
+    "equipmentX": -77.5,
+    "exitX": 9,
+    "noticeboardX": 5.5,
+    "armoryStairX": 21.5,
+    "upperGateX": 23.7,
+    "shortcutX": -30,
+    "wardenX": -38,
+    "lockX": 42.5,
+    "cityReturnX": 52,
+    "palaceGuardX": 72,
+    "palaceEvidenceX": 75,
+    "armoryReturnX": 92,
+    "detentionX": 114
+  },
+  "fragments": [
+    {
+      "id": "F01",
+      "timeNodeId": "T0",
+      "title": "晚年政务记录",
+      "statement": "先王晚年不理朝政，政务全交首相。",
+      "source": "监狱档案中的官方记录",
+      "sourceType": "officialRecord",
+      "faction": "王室",
+      "reliabilityHint": "这是一份官方记录，未记下国王本人的说法。",
+      "supportsStorylines": [
+        "coup",
+        "loyalist"
+      ],
+      "characters": [
+        "先王",
+        "首相"
+      ],
+      "locations": [
+        "监狱档案室"
+      ],
+      "relatedFragments": [],
+      "tags": [
+        "王权",
+        "首相"
+      ],
+      "narrativeText": "官方记录称，先王晚年将政务交给首相。"
+    },
+    {
+      "id": "F02",
+      "timeNodeId": "T0",
+      "title": "侍从日记",
+      "statement": "先王晚年常与弄臣独处，不许旁人靠近。",
+      "source": "王室廊道画像背面的私人日记",
+      "sourceType": "privateJournal",
+      "reliabilityHint": "侍从记录的是自己所见，未说明国王与弄臣谈了什么。",
+      "characters": [
+        "先王",
+        "弄臣"
+      ],
+      "locations": [
+        "皇宫王室廊道"
+      ],
+      "relatedFragments": [
+        "F01",
+        "F11"
+      ],
+      "tags": [
+        "先王",
+        "弄臣"
+      ],
+      "narrativeText": "一名侍从写道，先王晚年常与弄臣独处。"
+    },
+    {
+      "id": "F03",
+      "timeNodeId": "T1",
+      "title": "国王死讯公告",
+      "statement": "国王已死。",
+      "source": "祭坛中镶嵌的官方公告",
+      "sourceType": "officialNotice",
+      "faction": "王室",
+      "reliabilityHint": "公告只确认死讯，没有说明死因。",
+      "conflictGroup": "CG_T1",
+      "supportsStorylines": [
+        "coup"
+      ],
+      "characters": [
+        "国王"
+      ],
+      "locations": [
+        "监狱祭坛"
+      ],
+      "relatedFragments": [
+        "F04"
+      ],
+      "tags": [
+        "死讯"
+      ],
+      "narrativeText": "一份官方公告称，国王已经死亡；死因未写明。"
+    },
+    {
+      "id": "F04",
+      "timeNodeId": "T1",
+      "title": "卧病记录",
+      "statement": "国王晚年卧病三月，药石罔效。",
+      "source": "私人日记",
+      "sourceType": "privateJournal",
+      "reliabilityHint": "私人记录可能只看到病情的一部分。",
+      "conflictGroup": "CG_T1",
+      "supportsStorylines": [
+        "loyalist"
+      ],
+      "characters": [
+        "国王"
+      ],
+      "locations": [
+        "皇宫书房"
+      ],
+      "relatedFragments": [
+        "F03"
+      ],
+      "tags": [
+        "病情"
+      ],
+      "narrativeText": "一份私人日记记下国王卧病三月，药石罔效。"
+    },
+    {
+      "id": "F15",
+      "timeNodeId": "T1",
+      "title": "遗体暗色痕迹",
+      "statement": "国王遗体嘴角有暗色痕迹，御医记录为久病体虚。",
+      "source": "国王卧室的遗体验尸记录",
+      "sourceType": "forensicRecord",
+      "reliabilityHint": "痕迹与御医记录不一致，但尚不足以确认死因。",
+      "conflictGroup": "CG_T1",
+      "characters": [
+        "国王",
+        "御医"
+      ],
+      "locations": [
+        "皇宫国王卧室"
+      ],
+      "relatedFragments": [
+        "F03",
+        "F04"
+      ],
+      "tags": [
+        "遗体",
+        "死因"
+      ],
+      "narrativeText": "调查者发现遗体嘴角有暗色痕迹，御医记录却写着久病体虚。",
+      "supportsStorylines": [
+        "coup"
+      ]
+    },
+    {
+      "id": "F05",
+      "timeNodeId": "T2",
+      "title": "释放囚犯手令",
+      "statement": "首相手令：释放所有囚犯，入宫勤王。",
+      "source": "责难官持有的官方文件",
+      "sourceType": "officialRecord",
+      "faction": "首相",
+      "reliabilityHint": "手令署名首相，其传递经过仍待调查。",
+      "supportsStorylines": [
+        "coup",
+        "loyalist"
+      ],
+      "characters": [
+        "首相",
+        "责难官"
+      ],
+      "locations": [
+        "监狱刑讯室"
+      ],
+      "relatedFragments": [
+        "F06",
+        "F07"
+      ],
+      "tags": [
+        "释放令",
+        "勤王"
+      ],
+      "narrativeText": "一份署名首相的手令要求释放囚犯入宫勤王。"
+    },
+    {
+      "id": "F06",
+      "timeNodeId": "T2",
+      "title": "手令印章异样",
+      "statement": "首相手令的印章与以往文件略有不同。",
+      "source": "皇宫地下通道的信件与物品观察",
+      "sourceType": "object",
+      "reliabilityHint": "印章不同可能有多种解释，尚不能确认是谁改动。",
+      "conflictGroup": "CG_T2",
+      "characters": [
+        "首相"
+      ],
+      "locations": [
+        "皇宫地下通道"
+      ],
+      "relatedFragments": [
+        "F05"
+      ],
+      "tags": [
+        "印章",
+        "命令"
+      ],
+      "narrativeText": "另一份线索指出，手令印章与以往文件略有不同。"
+    },
+    {
+      "id": "F07",
+      "timeNodeId": "T3",
+      "title": "典狱长拒令公告",
+      "statement": "典狱长拒绝执行释放令，称无典狱长手谕不得放人。",
+      "source": "监狱大厅公告板",
+      "sourceType": "officialNotice",
+      "faction": "监狱",
+      "reliabilityHint": "公告记下拒绝执行的结果，没有解释典狱长的动机。",
+      "conflictGroup": "CG_T3",
+      "supportsStorylines": [
+        "coup"
+      ],
+      "characters": [
+        "典狱长"
+      ],
+      "locations": [
+        "监狱大厅"
+      ],
+      "relatedFragments": [
+        "F05",
+        "F08"
+      ],
+      "tags": [
+        "拒令"
+      ],
+      "narrativeText": "监狱公告记载，典狱长拒绝执行释放令。"
+    },
+    {
+      "id": "F08",
+      "timeNodeId": "T3",
+      "title": "典狱长与三王子",
+      "statement": "典狱长深夜与三王子的密使会面。",
+      "source": "皇宫塔楼顶部尸体上的私人记录",
+      "sourceType": "privateJournal",
+      "conflictGroup": "CG_T3",
+      "supportsStorylines": [
+        "loyalist"
+      ],
+      "characters": [
+        "典狱长",
+        "三王子密使"
+      ],
+      "locations": [
+        "皇宫塔楼顶部"
+      ],
+      "relatedFragments": [
+        "F07"
+      ],
+      "tags": [
+        "密会"
+      ],
+      "narrativeText": "一份私人记录称，典狱长深夜曾与三王子的密使会面。"
+    },
+    {
+      "id": "F09",
+      "timeNodeId": "T4",
+      "title": "狮心军集结",
+      "statement": "狮心军在城外三十里处集结。",
+      "source": "皇宫塔楼顶部的远景观察记录",
+      "sourceType": "environment",
+      "conflictGroup": "CG_T4",
+      "supportsStorylines": [
+        "loyalist"
+      ],
+      "characters": [
+        "狮心军"
+      ],
+      "locations": [
+        "皇宫塔楼顶部",
+        "王城外"
+      ],
+      "relatedFragments": [
+        "F10"
+      ],
+      "tags": [
+        "军队"
+      ],
+      "narrativeText": "塔楼的观察记录称，城外三十里处有狮心军集结。"
+    },
+    {
+      "id": "F10",
+      "timeNodeId": "T4",
+      "title": "城门封锁令",
+      "statement": "禁卫封锁了所有城门，出入需首相手令。",
+      "source": "皇宫前厅禁卫队长尸体上的官方命令",
+      "sourceType": "officialRecord",
+      "faction": "首相",
+      "conflictGroup": "CG_T4",
+      "supportsStorylines": [
+        "coup"
+      ],
+      "characters": [
+        "首相",
+        "禁卫"
+      ],
+      "locations": [
+        "皇宫前厅"
+      ],
+      "relatedFragments": [
+        "F09"
+      ],
+      "tags": [
+        "军队",
+        "城门"
+      ],
+      "narrativeText": "一份命令记载，禁卫封锁城门，出入需首相手令。"
+    },
+    {
+      "id": "F11",
+      "timeNodeId": "T5",
+      "title": "弄臣遗言",
+      "statement": "三王子等不及了。",
+      "source": "弄臣的记忆",
+      "sourceType": "bossMemory",
+      "reliabilityHint": "这是弄臣临终的说法，所指的行动尚不明确。",
+      "characters": [
+        "弄臣",
+        "三王子"
+      ],
+      "locations": [
+        "皇宫国王卧室"
+      ],
+      "relatedFragments": [
+        "F02"
+      ],
+      "tags": [
+        "王城混乱"
+      ],
+      "narrativeText": "弄臣的遗言提到，三王子等不及了。"
+    },
+    {
+      "id": "F12",
+      "timeNodeId": "T5",
+      "title": "潜入王城的刺客",
+      "statement": "奴隶军刺客已经潜入城中。",
+      "source": "典狱长持有的敌方文件",
+      "sourceType": "hostileDocument",
+      "reliabilityHint": "文件记录了潜入计划，尚需确认执行情况。",
+      "characters": [
+        "奴隶军刺客",
+        "典狱长"
+      ],
+      "locations": [
+        "监狱二楼典狱长房"
+      ],
+      "relatedFragments": [
+        "F11"
+      ],
+      "tags": [
+        "王城混乱",
+        "奴隶军"
+      ],
+      "narrativeText": "一份敌方文件称，奴隶军刺客已潜入城中。"
+    }
+  ],
+  "timeNodes": [
+    {
+      "id": "T0",
+      "label": "先王晚年朝政异常",
+      "result": "先王晚年不再亲自处理大部分朝政。"
+    },
+    {
+      "id": "T1",
+      "label": "国王死亡",
+      "result": "王城收到国王死亡的消息。"
+    },
+    {
+      "id": "T2",
+      "label": "首相发布命令",
+      "result": "一份要求释放囚犯的命令传入监狱。"
+    },
+    {
+      "id": "T3",
+      "label": "监狱拒绝执行",
+      "result": "监狱没有按释放令放人。"
+    },
+    {
+      "id": "T4",
+      "label": "城外军队调动",
+      "result": "王城周围出现军队调动。"
+    },
+    {
+      "id": "T5",
+      "label": "王城混乱",
+      "result": "王城秩序陷入混乱。"
+    }
+  ],
+  "weapons": {
+    "veteranGreatsword": {
+      "name": "老兵特大剑",
+      "category": "特大剑",
+      "attack": 155,
+      "scaling": {
+        "strength": "C"
+      },
+      "weight": 16,
+      "reach": 2.3,
+      "skill": "catalog",
+      "skillName": "震荡波",
+      "fpCost": 15,
+      "source": "初期商店"
+    },
+    "exileGreatsword": {
+      "name": "流放者特大剑",
+      "category": "特大剑",
+      "attack": 170,
+      "scaling": {
+        "strength": "C"
+      },
+      "weight": 18,
+      "reach": 2.35,
+      "skill": "catalog",
+      "skillName": "旋风斩",
+      "fpCost": 20,
+      "source": "法兰区域"
+    },
+    "ashGreatsword": {
+      "name": "灰之特大剑",
+      "category": "特大剑",
+      "attack": 145,
+      "elemental": {
+        "type": "暗",
+        "damage": 30
+      },
+      "scaling": {
+        "strength": "D"
+      },
+      "weight": 15,
+      "reach": 2.3,
+      "skill": "catalog",
+      "skillName": "灰烬冲击",
+      "fpCost": 20,
+      "source": "深渊 BOSS"
+    },
+    "cathedralKnightGreatsword": {
+      "name": "教堂骑士特大剑",
+      "category": "特大剑",
+      "attack": 165,
+      "scaling": {
+        "strength": "C"
+      },
+      "weight": 19,
+      "reach": 2.35,
+      "skill": "catalog",
+      "skillName": "坚守",
+      "fpCost": 10,
+      "source": "教堂掉落"
+    },
+    "blackKnightGreatsword": {
+      "name": "黑骑士特大剑",
+      "category": "特大剑",
+      "attack": 180,
+      "elemental": {
+        "type": "火",
+        "damage": 40
+      },
+      "scaling": {
+        "strength": "C"
+      },
+      "weight": 20,
+      "reach": 2.4,
+      "skill": "catalog",
+      "skillName": "火焰旋转",
+      "fpCost": 25,
+      "source": "黑骑士掉落"
+    },
+    "lorianGreatsword": {
+      "name": "洛里安大剑",
+      "category": "特大剑",
+      "attack": 190,
+      "elemental": {
+        "type": "火",
+        "damage": 60
+      },
+      "scaling": {
+        "strength": "B"
+      },
+      "weight": 22,
+      "reach": 2.45,
+      "skill": "catalog",
+      "skillName": "地底爆发",
+      "fpCost": 30,
+      "source": "最终 BOSS"
+    },
+    "vanhaltGreatsword": {
+      "name": "凡荷尔特大剑",
+      "category": "特大剑",
+      "attack": 150,
+      "elemental": {
+        "type": "雷",
+        "damage": 30
+      },
+      "scaling": {
+        "strength": "D"
+      },
+      "weight": 17,
+      "reach": 2.3,
+      "skill": "catalog",
+      "skillName": "落雷",
+      "fpCost": 25,
+      "source": "皇宫塔楼"
+    },
+    "straightSword": {
+      "name": "直剑",
+      "category": "大剑",
+      "attack": 105,
+      "scaling": {
+        "strength": "D",
+        "dexterity": "D"
+      },
+      "weight": 3,
+      "reach": 1.35,
+      "skill": "holyGuard",
+      "skillName": "圣盾格挡",
+      "fpCost": 15,
+      "source": "骑士初始"
+    },
+    "standardGreatsword": {
+      "name": "标准大剑",
+      "category": "大剑",
+      "attack": 115,
+      "scaling": {
+        "dexterity": "E"
+      },
+      "weight": 6,
+      "reach": 1.75,
+      "skill": "catalog",
+      "skillName": "横扫",
+      "fpCost": 12,
+      "source": "初期商店"
+    },
+    "balmuk": {
+      "name": "巴尔穆克",
+      "category": "大剑",
+      "attack": 100,
+      "elemental": {
+        "type": "火",
+        "damage": 20
+      },
+      "scaling": {
+        "dexterity": "D"
+      },
+      "weight": 4,
+      "reach": 1.5,
+      "skill": "catalog",
+      "skillName": "火焰附魔",
+      "fpCost": 18,
+      "source": "火焰区域"
+    },
+    "crimson": {
+      "name": "克里姆森",
+      "category": "大剑",
+      "attack": 95,
+      "bleed": 45,
+      "scaling": {
+        "dexterity": "C"
+      },
+      "weight": 3.5,
+      "reach": 1.45,
+      "skill": "catalog",
+      "skillName": "出血突刺",
+      "fpCost": 15,
+      "source": "地下区域"
+    },
+    "irithyllSword": {
+      "name": "伊鲁席尔直剑",
+      "category": "大剑",
+      "attack": 90,
+      "elemental": {
+        "type": "魔法",
+        "damage": 30
+      },
+      "scaling": {
+        "dexterity": "C"
+      },
+      "weight": 3,
+      "reach": 1.4,
+      "skill": "catalog",
+      "skillName": "灵魂光线",
+      "fpCost": 18,
+      "source": "魔法学院"
+    },
+    "scorchedEarth": {
+      "name": "燔烧三尺",
+      "category": "大剑",
+      "attack": 95,
+      "elemental": {
+        "type": "雷",
+        "damage": 25
+      },
+      "scaling": {
+        "dexterity": "D"
+      },
+      "weight": 4,
+      "reach": 1.5,
+      "skill": "catalog",
+      "skillName": "雷电附魔",
+      "fpCost": 18,
+      "source": "皇宫前院"
+    },
+    "astoraSword": {
+      "name": "亚斯特拉直剑",
+      "category": "大剑",
+      "attack": 85,
+      "hpRegen": 1,
+      "scaling": {
+        "dexterity": "E"
+      },
+      "weight": 3.5,
+      "reach": 1.35,
+      "skill": "catalog",
+      "skillName": "祝福",
+      "fpCost": 20,
+      "source": "NPC 支线"
+    },
+    "thiefDagger": {
+      "name": "盗贼短刀",
+      "category": "匕首",
+      "attack": 75,
+      "scaling": {
+        "dexterity": "C"
+      },
+      "weight": 1.5,
+      "reach": 1,
+      "skill": "daggerStep",
+      "skillName": "闪避步",
+      "fpCost": 10,
+      "source": "刺客初始（武器表）"
+    },
+    "assassinsBlade": {
+      "name": "刺杀之刃",
+      "category": "匕首",
+      "attack": 65,
+      "bleed": 45,
+      "scaling": {
+        "dexterity": "B"
+      },
+      "weight": 1,
+      "reach": 1,
+      "skill": "catalog",
+      "skillName": "出血突刺",
+      "fpCost": 12,
+      "source": "盗贼区域"
+    },
+    "shadowDagger": {
+      "name": "暗影匕首",
+      "category": "匕首",
+      "attack": 70,
+      "elemental": {
+        "type": "暗",
+        "damage": 15
+      },
+      "scaling": {
+        "dexterity": "C"
+      },
+      "weight": 1.2,
+      "reach": 1,
+      "skill": "catalog",
+      "skillName": "暗影步",
+      "fpCost": 15,
+      "source": "皇宫地下通道"
+    },
+    "needleSword": {
+      "name": "针剑",
+      "category": "匕首",
+      "attack": 55,
+      "bleed": 60,
+      "scaling": {
+        "dexterity": "B"
+      },
+      "weight": 0.8,
+      "reach": 1.1,
+      "skill": "catalog",
+      "skillName": "连刺",
+      "fpCost": 18,
+      "source": "后期商人"
+    },
+    "occultDagger": {
+      "name": "秘仪短刀",
+      "category": "匕首",
+      "attack": 60,
+      "elemental": {
+        "type": "暗",
+        "damage": 20
+      },
+      "scaling": {
+        "dexterity": "B"
+      },
+      "weight": 1,
+      "reach": 1,
+      "skill": "catalog",
+      "skillName": "暗之花",
+      "fpCost": 20,
+      "source": "隐藏 BOSS"
+    },
+    "rapier": {
+      "name": "刺剑",
+      "category": "刺剑",
+      "attack": 95,
+      "scaling": {
+        "strength": "D",
+        "dexterity": "B"
+      },
+      "weight": 2.5,
+      "reach": 1.6,
+      "skill": "flurry",
+      "skillName": "连续突刺",
+      "fpCost": 20,
+      "source": "刺客初始"
+    },
+    "dagger": {
+      "name": "短刀",
+      "category": "匕首",
+      "attack": 70,
+      "scaling": {
+        "strength": "E",
+        "dexterity": "C"
+      },
+      "weight": 1,
+      "reach": 1,
+      "skill": "daggerStep",
+      "skillName": "闪避步",
+      "fpCost": 10,
+      "source": "法师副手／牢房 D"
+    },
+    "apprenticeStaff": {
+      "name": "学徒法杖",
+      "category": "法杖",
+      "attack": 60,
+      "scaling": {
+        "intelligence": "C"
+      },
+      "weight": 2,
+      "reach": 1.3,
+      "skill": "soulArrow",
+      "skillName": "追踪灵魂箭",
+      "fpCost": 15,
+      "source": "法师初始"
+    },
+    "sageStaff": {
+      "name": "贤者法杖",
+      "category": "法杖",
+      "attack": 0,
+      "scaling": {},
+      "weight": 2.5,
+      "reach": 1.3,
+      "skill": "catalog",
+      "skillName": "火焰弹",
+      "fpCost": 20,
+      "source": "魔法学院"
+    },
+    "courtMageStaff": {
+      "name": "宫廷法师法杖",
+      "category": "法杖",
+      "attack": 0,
+      "scaling": {},
+      "weight": 3,
+      "reach": 1.3,
+      "skill": "catalog",
+      "skillName": "光辉墙",
+      "fpCost": 25,
+      "source": "皇宫皇家书房"
+    },
+    "crystalStaff": {
+      "name": "结晶法杖",
+      "category": "法杖",
+      "attack": 0,
+      "scaling": {},
+      "weight": 3.5,
+      "reach": 1.3,
+      "skill": "catalog",
+      "skillName": "暗之雨",
+      "fpCost": 35,
+      "source": "隐藏 BOSS"
+    },
+    "mace": {
+      "name": "钉锤",
+      "category": "钉锤",
+      "attack": 85,
+      "scaling": {
+        "strength": "D",
+        "faith": "D"
+      },
+      "weight": 4,
+      "reach": 1.25,
+      "skill": "blessing",
+      "skillName": "祝福",
+      "fpCost": 20,
+      "source": "牧师初始"
+    },
+    "club": {
+      "name": "木棍",
+      "category": "木棍",
+      "attack": 40,
+      "scaling": {},
+      "weight": 1,
+      "reach": 1.2,
+      "skill": "none",
+      "skillName": "无",
+      "fpCost": 0,
+      "source": "一无所有者初始"
+    }
+  },
+  "offhands": {
+    "leatherShield": {
+      "name": "小皮盾",
+      "kind": "shield",
+      "reduction": 0.7,
+      "parryBonusFrames": 2,
+      "stability": 20,
+      "weight": 1.5,
+      "source": "刺客初始／初期商店",
+      "special": "弹反窗口 +2 帧"
+    },
+    "kiteShield": {
+      "name": "鸢形盾",
+      "kind": "shield",
+      "reduction": 0.85,
+      "parryBonusFrames": 0,
+      "stability": 45,
+      "weight": 3,
+      "source": "骑士初始"
+    },
+    "knightShield": {
+      "name": "骑士盾",
+      "kind": "shield",
+      "reduction": 0.9,
+      "parryBonusFrames": 0,
+      "stability": 55,
+      "weight": 5,
+      "source": "教堂掉落"
+    },
+    "dragonShield": {
+      "name": "龙图纹盾",
+      "kind": "shield",
+      "reduction": 0.95,
+      "parryBonusFrames": 0,
+      "stability": 65,
+      "weight": 12,
+      "source": "火山 BOSS",
+      "special": "火减 60%"
+    },
+    "towerShield": {
+      "name": "塔盾",
+      "kind": "shield",
+      "reduction": 0.98,
+      "parryBonusFrames": 0,
+      "stability": 75,
+      "weight": 14,
+      "source": "皇宫主殿二层",
+      "special": "格挡精耗减半"
+    },
+    "woodenShield": {
+      "name": "木盾",
+      "kind": "shield",
+      "reduction": 0.5,
+      "parryBonusFrames": 0,
+      "stability": 10,
+      "weight": 1,
+      "source": "一无所有者初始"
+    },
+    "travelerScripture": {
+      "name": "旅人圣典",
+      "kind": "scripture",
+      "reduction": 0,
+      "parryBonusFrames": 0,
+      "stability": 0,
+      "weight": 1.5,
+      "source": "牧师初始"
+    },
+    "priestScripture": {
+      "name": "祭司圣典",
+      "kind": "scripture",
+      "reduction": 0,
+      "parryBonusFrames": 0,
+      "stability": 0,
+      "weight": 2,
+      "source": "教堂商人"
+    },
+    "saintScripture": {
+      "name": "圣人圣典",
+      "kind": "scripture",
+      "reduction": 0,
+      "parryBonusFrames": 0,
+      "stability": 0,
+      "weight": 2.5,
+      "source": "NPC 支线",
+      "special": "回复 +20%"
+    },
+    "whiteScripture": {
+      "name": "白教圣典",
+      "kind": "scripture",
+      "reduction": 0,
+      "parryBonusFrames": 0,
+      "stability": 0,
+      "weight": 3,
+      "source": "皇宫塔楼顶部",
+      "special": "雷祷言 +15%"
+    }
+  },
+  "scaling": {
+    "S": 1,
+    "A": 0.7,
+    "B": 0.5,
+    "C": 0.35,
+    "D": 0.2,
+    "E": 0.1
+  },
+  "origins": {
+    "knight": {
+      "name": "骑士",
+      "level": 9,
+      "armor": [
+        "骑士头盔",
+        "骑士铠甲",
+        "骑士腿甲",
+        "骑士护手"
+      ],
+      "mainHand": "直剑",
+      "offHand": "鸢形盾",
+      "other": "原素瓶×3"
+    },
+    "assassin": {
+      "name": "刺客",
+      "level": 10,
+      "armor": [
+        "刺客兜帽",
+        "刺客皮甲",
+        "刺客腿甲",
+        "刺客护手"
+      ],
+      "mainHand": "刺剑",
+      "offHand": "小皮盾",
+      "other": "原素瓶×3、飞镖×10、隐身术"
+    },
+    "mage": {
+      "name": "法师",
+      "level": 6,
+      "armor": [
+        "法师尖帽",
+        "法师长袍",
+        "法师腿布",
+        "法师护手"
+      ],
+      "mainHand": "学徒法杖",
+      "offHand": "短刀",
+      "other": "原素瓶×3、灵魂箭"
+    },
+    "cleric": {
+      "name": "牧师",
+      "level": 7,
+      "armor": [
+        "牧师帽",
+        "牧师长袍",
+        "牧师腿布",
+        "牧师护手"
+      ],
+      "mainHand": "钉锤",
+      "offHand": "旅人圣典",
+      "other": "原素瓶×3、小回复、光辉武器、神识"
+    },
+    "wretch": {
+      "name": "一无所有者",
+      "level": 1,
+      "armor": [
+        "破布头",
+        "破布身",
+        "破布腿",
+        "破布手"
+      ],
+      "mainHand": "木棍",
+      "offHand": "木盾",
+      "other": "原素瓶×3"
+    }
+  },
+  "attributes": {
+    "knight": {
+      "vigor": 12,
+      "attunement": 10,
+      "endurance": 11,
+      "vitality": 15,
+      "strength": 13,
+      "dexterity": 12,
+      "intelligence": 9,
+      "faith": 9,
+      "luck": 7
+    },
+    "assassin": {
+      "vigor": 10,
+      "attunement": 14,
+      "endurance": 11,
+      "vitality": 10,
+      "strength": 10,
+      "dexterity": 14,
+      "intelligence": 11,
+      "faith": 9,
+      "luck": 10
+    },
+    "mage": {
+      "vigor": 9,
+      "attunement": 16,
+      "endurance": 9,
+      "vitality": 7,
+      "strength": 7,
+      "dexterity": 12,
+      "intelligence": 16,
+      "faith": 7,
+      "luck": 12
+    },
+    "cleric": {
+      "vigor": 10,
+      "attunement": 14,
+      "endurance": 9,
+      "vitality": 7,
+      "strength": 12,
+      "dexterity": 8,
+      "intelligence": 7,
+      "faith": 16,
+      "luck": 13
+    },
+    "wretch": {
+      "vigor": 10,
+      "attunement": 10,
+      "endurance": 10,
+      "vitality": 10,
+      "strength": 10,
+      "dexterity": 10,
+      "intelligence": 10,
+      "faith": 10,
+      "luck": 10
+    }
+  },
+  "encounters": {
+    "cellGuard": {
+      "enemy": {
+        "x": -78.7,
+        "spawnX": -78.7,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 50,
+          "max": 50,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 80,
+      "maxHealth": 80,
+      "floorY": 0,
+      "minX": -79.5,
+      "maxX": -76.6,
+      "souls": 30,
+      "name": "牢房疯兵"
+    },
+    "corruptedKnight": {
+      "enemy": {
+        "x": -5,
+        "spawnX": -5,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 200,
+          "max": 200,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 350,
+      "maxHealth": 350,
+      "floorY": 2.5,
+      "minX": -11,
+      "maxX": 1,
+      "souls": 300,
+      "name": "腐化骑士"
+    },
+    "upper1": {
+      "enemy": {
+        "x": 10,
+        "spawnX": 10,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 50,
+          "max": 50,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 80,
+      "maxHealth": 80,
+      "floorY": 7,
+      "minX": 7.5,
+      "maxX": 12.5,
+      "souls": 50,
+      "name": "二楼狱卒"
+    },
+    "upper2": {
+      "enemy": {
+        "x": -2,
+        "spawnX": -2,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 50,
+          "max": 50,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 80,
+      "maxHealth": 80,
+      "floorY": 7,
+      "minX": -4.5,
+      "maxX": 0.5,
+      "souls": 50,
+      "name": "二楼狱卒"
+    },
+    "upper3": {
+      "enemy": {
+        "x": -15,
+        "spawnX": -15,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 50,
+          "max": 50,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 80,
+      "maxHealth": 80,
+      "floorY": 7,
+      "minX": -17.5,
+      "maxX": -12.5,
+      "souls": 50,
+      "name": "二楼狱卒"
+    },
+    "upper4": {
+      "enemy": {
+        "x": -27,
+        "spawnX": -27,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 50,
+          "max": 50,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 80,
+      "maxHealth": 80,
+      "floorY": 7,
+      "minX": -29.5,
+      "maxX": -24.5,
+      "souls": 50,
+      "name": "二楼狱卒"
+    },
+    "inquisitor": {
+      "enemy": {
+        "x": 36,
+        "spawnX": 36,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 200,
+          "max": 200,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 400,
+      "maxHealth": 400,
+      "floorY": 2.5,
+      "minX": 29,
+      "maxX": 41,
+      "souls": 500,
+      "name": "责难官"
+    },
+    "warden": {
+      "enemy": {
+        "x": -38,
+        "spawnX": -38,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 350,
+          "max": 350,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 1500,
+      "maxHealth": 1500,
+      "floorY": 7,
+      "minX": -41,
+      "maxX": -34,
+      "souls": 5000,
+      "name": "典狱长"
+    },
+    "palaceGuard": {
+      "enemy": {
+        "x": 72,
+        "spawnX": 72,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 100,
+          "max": 100,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 200,
+      "maxHealth": 200,
+      "floorY": 2.5,
+      "minX": 68,
+      "maxX": 77,
+      "souls": 200,
+      "name": "禁卫队长"
+    },
+    "soldier": {
+      "enemy": {
+        "x": -31,
+        "spawnX": -31,
+        "facing": -1,
+        "mode": "patrol",
+        "elapsed": 0,
+        "hitPlayer": false,
+        "attackIndex": 0,
+        "activeAttack": 0,
+        "poise": {
+          "current": 50,
+          "max": 50,
+          "recoveryDelay": 0,
+          "exhaustedRemaining": 0,
+          "executionAvailable": false
+        }
+      },
+      "health": 80,
+      "maxHealth": 80,
+      "floorY": 2.5,
+      "minX": -34,
+      "maxX": -28,
+      "souls": 50,
+      "name": "灰烬士兵"
+    }
+  },
+  "profiles": {
+    "cellGuard": {
+      "normal": {
+        "detectRange": 4.5,
+        "chaseSpeed": 2.8,
+        "attacks": [
+          {
+            "name": "疯乱劈砍",
+            "range": 1.35,
+            "damage": 15,
+            "windup": 0.38,
+            "active": 0.17,
+            "recovery": 0.72
+          },
+          {
+            "name": "扑身突击",
+            "range": 2.8,
+            "damage": 18,
+            "windup": 0.55,
+            "active": 0.27,
+            "recovery": 0.95,
+            "lungeSpeed": 5
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 4.5,
+        "chaseSpeed": 2.8,
+        "attacks": [
+          {
+            "name": "疯乱劈砍",
+            "range": 1.35,
+            "damage": 15,
+            "windup": 0.38,
+            "active": 0.17,
+            "recovery": 0.72
+          },
+          {
+            "name": "扑身突击",
+            "range": 2.8,
+            "damage": 18,
+            "windup": 0.55,
+            "active": 0.27,
+            "recovery": 0.95,
+            "lungeSpeed": 5
+          }
+        ]
+      }
+    },
+    "corruptedKnight": {
+      "normal": {
+        "detectRange": 5.3,
+        "chaseSpeed": 1.9,
+        "attacks": [
+          {
+            "name": "腐化横斩",
+            "range": 2.1,
+            "damage": 50,
+            "windup": 0.7,
+            "active": 0.2,
+            "recovery": 0.95
+          },
+          {
+            "name": "盾肩冲撞",
+            "range": 3.4,
+            "damage": 45,
+            "windup": 0.6,
+            "active": 0.32,
+            "recovery": 1.1,
+            "lungeSpeed": 4.8
+          },
+          {
+            "name": "重剑下劈",
+            "range": 1.65,
+            "damage": 65,
+            "windup": 0.95,
+            "active": 0.2,
+            "recovery": 1.2
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 5.3,
+        "chaseSpeed": 1.9,
+        "attacks": [
+          {
+            "name": "腐化横斩",
+            "range": 2.1,
+            "damage": 50,
+            "windup": 0.7,
+            "active": 0.2,
+            "recovery": 0.95
+          },
+          {
+            "name": "盾肩冲撞",
+            "range": 3.4,
+            "damage": 45,
+            "windup": 0.6,
+            "active": 0.32,
+            "recovery": 1.1,
+            "lungeSpeed": 4.8
+          },
+          {
+            "name": "重剑下劈",
+            "range": 1.65,
+            "damage": 65,
+            "windup": 0.95,
+            "active": 0.2,
+            "recovery": 1.2
+          }
+        ]
+      }
+    },
+    "upper1": {
+      "normal": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      }
+    },
+    "upper2": {
+      "normal": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      }
+    },
+    "upper3": {
+      "normal": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      }
+    },
+    "upper4": {
+      "normal": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      }
+    },
+    "inquisitor": {
+      "normal": {
+        "detectRange": 6,
+        "chaseSpeed": 1.8,
+        "attacks": [
+          {
+            "name": "审讯鞭横扫",
+            "range": 3.1,
+            "damage": 35,
+            "windup": 0.7,
+            "active": 0.22,
+            "recovery": 0.95
+          },
+          {
+            "name": "烙铁投掷",
+            "range": 5.2,
+            "damage": 32,
+            "windup": 0.9,
+            "active": 0.15,
+            "recovery": 1.05,
+            "projectileSpeed": 8
+          },
+          {
+            "name": "锁链拉拽",
+            "range": 3.8,
+            "damage": 30,
+            "windup": 0.8,
+            "active": 0.2,
+            "recovery": 1,
+            "displacement": -1.6
+          },
+          {
+            "name": "刑罚踩踏",
+            "range": 1.5,
+            "damage": 45,
+            "windup": 0.85,
+            "active": 0.22,
+            "recovery": 1.1,
+            "groundOnly": true,
+            "allAround": true
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 6,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "审讯鞭横扫",
+            "range": 3.1,
+            "damage": 35,
+            "windup": 0.7,
+            "active": 0.22,
+            "recovery": 0.95
+          },
+          {
+            "name": "烙铁投掷",
+            "range": 5.2,
+            "damage": 32,
+            "windup": 0.9,
+            "active": 0.15,
+            "recovery": 1.05,
+            "projectileSpeed": 8
+          },
+          {
+            "name": "锁链拉拽",
+            "range": 3.8,
+            "damage": 30,
+            "windup": 0.8,
+            "active": 0.2,
+            "recovery": 1,
+            "displacement": -1.6
+          },
+          {
+            "name": "刑罚踩踏",
+            "range": 1.5,
+            "damage": 45,
+            "windup": 0.85,
+            "active": 0.22,
+            "recovery": 1.1,
+            "groundOnly": true,
+            "allAround": true
+          },
+          {
+            "name": "暴怒连击",
+            "range": 2.2,
+            "damage": 50,
+            "windup": 0.42,
+            "active": 0.34,
+            "recovery": 0.7,
+            "lungeSpeed": 3
+          }
+        ]
+      }
+    },
+    "warden": {
+      "normal": {
+        "detectRange": 7,
+        "chaseSpeed": 1.4,
+        "attacks": [
+          {
+            "name": "念力推",
+            "range": 4.4,
+            "damage": 45,
+            "windup": 0.75,
+            "active": 0.18,
+            "recovery": 1,
+            "displacement": 1.8
+          },
+          {
+            "name": "暗影弹",
+            "range": 6.2,
+            "damage": 38,
+            "windup": 1,
+            "active": 0.15,
+            "recovery": 1,
+            "projectileSpeed": 7
+          },
+          {
+            "name": "地面震动",
+            "range": 3,
+            "damage": 55,
+            "windup": 1.15,
+            "active": 0.25,
+            "recovery": 1.25,
+            "groundOnly": true,
+            "allAround": true
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 7,
+        "chaseSpeed": 2,
+        "attacks": [
+          {
+            "name": "念力推",
+            "range": 4.4,
+            "damage": 45,
+            "windup": 0.75,
+            "active": 0.18,
+            "recovery": 1,
+            "displacement": 1.8
+          },
+          {
+            "name": "暗影弹",
+            "range": 6.2,
+            "damage": 38,
+            "windup": 1,
+            "active": 0.15,
+            "recovery": 1,
+            "projectileSpeed": 7
+          },
+          {
+            "name": "地面震动",
+            "range": 3,
+            "damage": 55,
+            "windup": 1.15,
+            "active": 0.25,
+            "recovery": 1.25,
+            "groundOnly": true,
+            "allAround": true
+          },
+          {
+            "name": "钥匙横斩",
+            "range": 2.2,
+            "damage": 60,
+            "windup": 0.55,
+            "active": 0.22,
+            "recovery": 0.9
+          },
+          {
+            "name": "钥匙突进",
+            "range": 4,
+            "damage": 65,
+            "windup": 0.72,
+            "active": 0.35,
+            "recovery": 1.1,
+            "lungeSpeed": 5.2
+          }
+        ]
+      }
+    },
+    "palaceGuard": {
+      "normal": {
+        "detectRange": 5.2,
+        "chaseSpeed": 2.1,
+        "attacks": [
+          {
+            "name": "禁卫长枪突刺",
+            "range": 2.4,
+            "damage": 40,
+            "windup": 0.65,
+            "active": 0.2,
+            "recovery": 0.85
+          },
+          {
+            "name": "盾阵冲锋",
+            "range": 3.7,
+            "damage": 45,
+            "windup": 0.75,
+            "active": 0.3,
+            "recovery": 1,
+            "lungeSpeed": 5
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 5.2,
+        "chaseSpeed": 2.1,
+        "attacks": [
+          {
+            "name": "禁卫长枪突刺",
+            "range": 2.4,
+            "damage": 40,
+            "windup": 0.65,
+            "active": 0.2,
+            "recovery": 0.85
+          },
+          {
+            "name": "盾阵冲锋",
+            "range": 3.7,
+            "damage": 45,
+            "windup": 0.75,
+            "active": 0.3,
+            "recovery": 1,
+            "lungeSpeed": 5
+          }
+        ]
+      }
+    },
+    "soldier": {
+      "normal": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      },
+      "phase2": {
+        "detectRange": 4.8,
+        "chaseSpeed": 2.3,
+        "attacks": [
+          {
+            "name": "横斩",
+            "range": 1.3,
+            "damage": 25,
+            "windup": 0.6,
+            "active": 0.16,
+            "recovery": 0.8
+          }
+        ]
+      }
+    }
+  }
+}

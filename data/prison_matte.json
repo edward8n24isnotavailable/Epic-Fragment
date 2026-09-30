@@ -1,0 +1,448 @@
+{
+  "unit": 64,
+  "image_size": [
+    2560,
+    1024
+  ],
+  "image_origin": [
+    -1280,
+    -800
+  ],
+  "camera": {
+    "x": 0,
+    "height": 4.5,
+    "width": 40,
+    "rotation_degrees": [
+      90,
+      0,
+      0
+    ]
+  },
+  "restored_textures": [
+    "stone_normal",
+    "stone_basecolor",
+    "stone_roughness",
+    "wood_normal",
+    "wood_basecolor",
+    "wood_roughness",
+    "floor_normal",
+    "floor_basecolor",
+    "floor_roughness"
+  ],
+  "colliders": [
+    {
+      "name": "COL_Floor_Left",
+      "source_polygon": [
+        [
+          -1248.0,
+          -0.0
+        ],
+        [
+          -160.0,
+          -0.0
+        ],
+        [
+          -160.0,
+          25.6
+        ],
+        [
+          -1248.0,
+          25.6
+        ]
+      ],
+      "polygon": [
+        [
+          -1248.0,
+          -0.0
+        ],
+        [
+          -160.0,
+          -0.0
+        ],
+        [
+          -160.0,
+          25.6
+        ],
+        [
+          -1248.0,
+          25.6
+        ]
+      ],
+      "one_way": false,
+      "enabled": true,
+      "note": "Source x/z convex projection"
+    },
+    {
+      "name": "COL_Floor_Right",
+      "source_polygon": [
+        [
+          160.0,
+          -0.0
+        ],
+        [
+          1222.4,
+          -0.0
+        ],
+        [
+          1222.4,
+          25.6
+        ],
+        [
+          160.0,
+          25.6
+        ]
+      ],
+      "polygon": [
+        [
+          160.0,
+          -0.0
+        ],
+        [
+          1222.4,
+          -0.0
+        ],
+        [
+          1222.4,
+          25.6
+        ],
+        [
+          160.0,
+          25.6
+        ]
+      ],
+      "one_way": false,
+      "enabled": true,
+      "note": "Source x/z convex projection"
+    },
+    {
+      "name": "COL_Stair_Left_LowerRamp",
+      "source_polygon": [
+        [
+          -987.2,
+          -203.52
+        ],
+        [
+          -644.8,
+          -203.52
+        ],
+        [
+          -644.8,
+          1.28
+        ],
+        [
+          -987.2,
+          1.28
+        ]
+      ],
+      "polygon": [
+        [
+          -987.2,
+          -195.84
+        ],
+        [
+          -644.8,
+          0
+        ],
+        [
+          -644.8,
+          1.28
+        ],
+        [
+          -987.2,
+          1.28
+        ]
+      ],
+      "one_way": false,
+      "enabled": true,
+      "note": "Source mesh is a box, replaced with a slope following visible steps"
+    },
+    {
+      "name": "COL_Stair_Left_TurnLanding",
+      "source_polygon": [
+        [
+          -1028.8,
+          -208.0
+        ],
+        [
+          -923.2,
+          -208.0
+        ],
+        [
+          -923.2,
+          -181.12
+        ],
+        [
+          -1028.8,
+          -181.12
+        ]
+      ],
+      "polygon": [
+        [
+          -1028.8,
+          -195.84
+        ],
+        [
+          -923.2,
+          -195.84
+        ],
+        [
+          -923.2,
+          -181.12
+        ],
+        [
+          -1028.8,
+          -181.12
+        ]
+      ],
+      "one_way": true,
+      "enabled": true,
+      "note": "Top lowered from 3.25 to the visible landing at 3.06"
+    },
+    {
+      "name": "COL_Stair_Left_Upper",
+      "source_polygon": [
+        [
+          -1030.08,
+          -299.2
+        ],
+        [
+          -930.88,
+          -299.2
+        ],
+        [
+          -930.88,
+          -193.6
+        ],
+        [
+          -1030.08,
+          -193.6
+        ]
+      ],
+      "polygon": [
+        [
+          -1030.08,
+          -299.2
+        ],
+        [
+          -930.88,
+          -299.2
+        ],
+        [
+          -930.88,
+          -193.6
+        ],
+        [
+          -1030.08,
+          -193.6
+        ]
+      ],
+      "one_way": false,
+      "enabled": false,
+      "note": "Depth-facing stair: use a 2D jump from turn landing"
+    },
+    {
+      "name": "COL_Upper_Left",
+      "source_polygon": [
+        [
+          -1094.4,
+          -300.8
+        ],
+        [
+          -262.4,
+          -300.8
+        ],
+        [
+          -262.4,
+          -280.32
+        ],
+        [
+          -1094.4,
+          -280.32
+        ]
+      ],
+      "polygon": [
+        [
+          -1094.4,
+          -300.8
+        ],
+        [
+          -262.4,
+          -300.8
+        ],
+        [
+          -262.4,
+          -280.32
+        ],
+        [
+          -1094.4,
+          -280.32
+        ]
+      ],
+      "one_way": true,
+      "enabled": true,
+      "note": "Source x/z convex projection"
+    },
+    {
+      "name": "COL_Upper_Right",
+      "source_polygon": [
+        [
+          288.0,
+          -300.8
+        ],
+        [
+          953.6,
+          -300.8
+        ],
+        [
+          953.6,
+          -280.32
+        ],
+        [
+          288.0,
+          -280.32
+        ]
+      ],
+      "polygon": [
+        [
+          288.0,
+          -300.8
+        ],
+        [
+          953.6,
+          -300.8
+        ],
+        [
+          953.6,
+          -280.32
+        ],
+        [
+          288.0,
+          -280.32
+        ]
+      ],
+      "one_way": true,
+      "enabled": true,
+      "note": "Source x/z convex projection"
+    }
+  ],
+  "markers": {
+    "MARK_CentralBackground": [
+      0.0,
+      -64.0
+    ],
+    "MARK_PlayerStart": [
+      -896.0,
+      -9.6
+    ],
+    "MARK_RightDoor": [
+      1024.0,
+      -9.6
+    ],
+    "MARK_Rune_LowerRight": [
+      684.8,
+      -69.12
+    ],
+    "MARK_Rune_Upper": [
+      377.6,
+      -372.48
+    ],
+    "MARK_Torch_LeftUpper": [
+      -972.8,
+      -400.64
+    ],
+    "MARK_Torch_LowerLeft": [
+      -640.0,
+      -173.44
+    ],
+    "MARK_Torch_LowerRight": [
+      800.0,
+      -179.84
+    ],
+    "MARK_Torch_UpperRight": [
+      678.4,
+      -435.84
+    ],
+    "MARK_UpperLeftLanding": [
+      -972.8,
+      -302.08
+    ]
+  },
+  "layers": {
+    "foreground_objects": [
+      "Cage_Bar_0",
+      "Cage_Bar_1",
+      "Cage_Bar_2",
+      "Cage_Bar_3",
+      "Cage_Bar_4",
+      "Cage_Bar_5",
+      "Cage_Bar_6",
+      "Cage_Bar_7",
+      "Cage_RingBot",
+      "Cage_RingTop",
+      "Chain_Center_00",
+      "Chain_Center_01",
+      "Chain_Center_02",
+      "Chain_Center_03",
+      "Chain_Center_04",
+      "Chain_Center_05",
+      "Chain_Center_06",
+      "Chain_Center_07",
+      "Chain_Center_08",
+      "Chain_Center_09",
+      "Chain_Center_10",
+      "Chain_Center_11",
+      "Chain_Center_12",
+      "Chain_Center_13",
+      "Chain_Left_00",
+      "Chain_Left_01",
+      "Chain_Left_02",
+      "Chain_Left_03",
+      "Chain_Left_04",
+      "Chain_Left_05",
+      "Chain_Left_06",
+      "Chain_Left_07",
+      "Chain_Left_08",
+      "Chain_Left_09",
+      "Chain_Left_10",
+      "Chain_Left_11",
+      "Chain_Left_12",
+      "Chain_Right_00",
+      "Chain_Right_01",
+      "Chain_Right_02",
+      "Chain_Right_03",
+      "Chain_Right_04",
+      "Chain_Right_05",
+      "Chain_Right_06",
+      "Chain_Right_07",
+      "Chain_Right_08",
+      "Chain_Right_09",
+      "Chain_Right_10",
+      "Chain_Right_11",
+      "Chain_Right_12",
+      "Chain_Right_13",
+      "Chain_Right_14"
+    ],
+    "door_objects": [
+      "Door_Right",
+      "Door_Right_Iron_-0.28",
+      "Door_Right_Iron_-0.85",
+      "Door_Right_Iron_0.28",
+      "Door_Right_Iron_0.85",
+      "Door_Right_Ring_-0.35",
+      "Door_Right_Ring_0.35"
+    ],
+    "runtime_fx_objects": [
+      "Rune_LowerRight_Rune",
+      "Rune_Upper_Rune",
+      "Torch_LeftUpper_Flame",
+      "Torch_LowerLeft_Flame",
+      "Torch_LowerRight_Flame",
+      "Torch_UpperRight_Flame"
+    ]
+  },
+  "limitations": [
+    "The depth-facing upper stair needs a 2D jump adapter",
+    "Source spawn intersects the lower ramp; snap to its top",
+    "Lighting and static shadows are baked; player does not cast a baked shadow"
+  ]
+}
